@@ -1,0 +1,172 @@
+<% layout('layouts/boilerplate')%>
+
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Xác nhận</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    Nhiệm vụ "<%= daily.title %>" sẽ bị xóa, tiếp tục?
+                </div>
+                <div class="modal-footer">
+                    <form action="/projects/<%= project.id %>/deletedaily" method="post">
+                        <input type="text" value="<%= daily.id%>" name="daily" hidden>
+                        <button class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Xóa file</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" id="file-confirm" data-bs-target="#fileModal">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5 mb-3">
+        <a href="/manage#projectTable" class="tree-menu-link">Quản lý</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        <a class="tree-menu-link" href="/projects/<%= project.id %>">
+            <%= project.title %>
+        </a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        <%= daily.title %>
+    </h3>
+
+    <form class="mt-5 row" action="/dailies/<%= daily.id %>/edit" enctype="multipart/form-data" method="POST">
+        <div class="col-xl-6">
+            <div class="">
+                <div class="mb-3">
+                    <label for="projectname" class="form-label">Tiêu đề</label>
+                    <input type="text" id="projectname" class="form-control" placeholder="Enter task name" name="title"
+                        value="<%= daily.title %>" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="project-overview" class="form-label">Nội dung</label>
+                    <textarea class="form-control" id="project-overview" rows="5" placeholder=""
+                        name="description"><%= daily.description %></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-lable">Thêm file đính kèm </label>
+                    <input type="file" multiple class="form-control" name="files">
+
+                </div>
+
+                <!-- Date View -->
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <label for="leaders" class="">Phụ trách</label>
+                </div>
+                <div id="listgroup" class='overflow-auto' style="height: <%= users.length > 5? '250px':'auto' %>">
+                    <% users.forEach(user=> { %>
+                        <label class="list-group-item list-group-item-action">
+                            <input class="form-check-input me-1" type="radio" value="<%= user.id %>" name="user"
+                                aria-label="..." required <%=user.id==daily.UserId? 'checked' :'' %>>
+                            <a>
+
+                                <img src="/uploads/avatars/<%= user.getavatar().fileName %>" class="rounded-circle"
+                                    width="32" size="32" alt="">
+                                <%= user.name %>
+                            </a>
+                        </label>
+
+                        <% }) %>
+                </div>
+            </div>
+
+
+
+
+            <div class="mb-3 ">
+                <% if(daily.Files.length) {%>
+                    <label for="" class="form-label">Tệp đính kèm</label>
+
+
+                    <div id="files">
+                        <% daily.Files.forEach(el=> { %>
+                            <div class="alert alert-light border alert-dismissible fade show mb-0">
+                                <a class="avt-link" href="/uploads/dailies/<%= el.fileName  %>" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" />
+                                        <path
+                                            d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+                                    </svg>
+                                    <%= el.fileDisplay %>
+                                </a>
+                                <button type="button" class="btn btn-close btn-danger btn-file-delete"
+                                    id="file-<%= el.id %>" data-bs-toggle="modal" data-bs-target="#fileModal"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" id="close-<%= el.id %>"
+                                    aria-label="Close" hidden></button>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } %>
+
+
+            </div>
+        </div>
+
+
+        <div class="d-flex ">
+            <div>
+                <button class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+            <div class="mx-1">
+                <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Xóa</a>
+            </div>
+        </div>
+    </form>
+
+    <script>
+
+
+        $('.btn-file-delete').on('click', function () {
+            const modal = document.querySelector(this.dataset.bsTarget);
+            const [bob, id] = this.id.split('-');
+            modal.querySelector('.modal-body').innerText = 'file ' + this.previousElementSibling.innerText + ' sẽ bị xóa, tiếp tục?';
+            const input = document.createElement('input');
+            input.value = id;
+            input.hidden = true;
+            modal.querySelector('.modal-body').appendChild(input);
+        })
+        $('#file-confirm').on('click', function (e) {
+            const modal = document.querySelector('#fileModal');
+            const id = modal.querySelector('input').value;
+            const response = fetch(`filedelete/${id}`, {
+                method: 'delete'
+            })
+            document.getElementById(`close-${id}`).click();
+            modal.querySelector('.btn-close').click();
+        })
+
+    </script>

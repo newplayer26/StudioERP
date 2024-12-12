@@ -1,0 +1,49 @@
+<% layout('layouts/boilerplate_2')%>
+
+<div class="d-flex justify-content-center">
+  <div>
+    <img src="/uploads/logo/logo.png" style="height: 200px; width: auto" alt="">
+  </div>
+</div>
+<div class="row">
+  <div class="col col-md-6 col-lg-4 offset-lg-4 offset-md-3">
+    <div class="card py-3 px-5 border-0 text-dark">
+      <h1 class="text-center card-title">Đăng nhập
+        
+      </h1>
+      <form
+        action="/login"
+        class="needs-validation card-body"
+        method="POST"
+        novalidate
+      >
+        <div class="mb-3">
+          <label class="form-label" for="username">Email</label>
+          <input
+            class="form-control"
+            type="text"
+            id="username"
+            name="email"
+            required
+          />
+          <div class="valid-feedback">Looks good!</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="password">Mật khẩu</label>
+          <input
+            class="form-control"
+            type="password"
+            id="password"
+            name="password"
+            required
+          />
+          <div class="valid-feedback">Looks good!</div>
+        </div>
+        <div class="mb-3">
+          <button class="btn btn-info">Log in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- <script src="/javascripts/validateForms.js"></script> -->
+</div>

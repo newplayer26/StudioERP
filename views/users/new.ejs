@@ -1,0 +1,182 @@
+<% layout('layouts/boilerplate') %>
+  <div class="modal fade" id="leaderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body ">
+          <form onsubmit="search(event)" class="d-flex">
+
+            <input type="text" id="searchInput" class="form-control " placeholder="Search..." />
+
+            <button type="submit" id="queryBtn" class="btn btn-primary"><i class="fa fa-search"></i></button>
+
+          </form>
+          <div class="card">
+            <div class="card-body list" id="results">
+              <div id="results" class="list-group">
+              </div>
+            </div>
+          </div>
+          <script>
+            async function search(event) {
+              event.preventDefault();
+              const btn = document.getElementById('queryBtn');
+              btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+              const resHolder = document.getElementById("results");
+              resHolder.innerHTML = "";
+              const query = document.getElementById("searchInput").value;
+              let value = document.getElementById('job').value;
+              if (!value)
+                value = 3;
+              let url = `<%= process.env.DOMAIN_NAME %>/search/users?search=${query}&level=${value}`;
+              const response = await fetch(url, {
+                method: "POST",
+                body: JSON.stringify({ query: query }),
+              });
+              const data = await response.json();
+              btn.innerHTML = `<i class="fa fa-search"></i>`;
+              const members = document.getElementById("superior");
+              for (let one of data) {
+                const newDiv = document.createElement("div");
+                const user = document.createElement("a");
+                user.classList.add('list-group-item', "list-group-item-action")
+                user.innerHTML = `<span>
+                <img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+                width="32"
+                height="32"
+                class="rounded-circle">
+              </span>
+              ${one.name}`;
+                user.addEventListener("click", () => {
+                  members.innerHTML = '';
+                  const memberDiv = document.createElement("div");
+                  memberDiv.classList.add('alert', 'alert-light', 'alert-dismissible', 'fade', 'show')
+                  memberDiv.innerHTML = `
+                        <a class="avt-link">
+
+                  <span>
+                <img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+                width="32"
+                height="32"
+                class="rounded-circle">
+              </span>
+              ${one.name}
+                  <input
+                    type="text"
+                    name="superior"
+                    value="${one.id}"
+                    hidden
+                  />
+                </a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                  members.appendChild(memberDiv);
+                });
+                newDiv.appendChild(user);
+                resHolder.appendChild(newDiv);
+              }
+            }
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container my-5">
+    <h2>Thông tin nhân viên</h2>
+    <form action="/users/new" method="POST" class="needs-validation" enctype="multipart/form-data" novalidate>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="phone" class="form-label">Số điện thoại</label>
+          <input type="text" class="form-control" id="phone" name="phone" value="" required/>
+        </div>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" name="email" value="" required/>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <label for="" class="form-label">CCCD/CMND</label>
+          <input type="text" name="document" id="" class="form-control" required>
+        </div>
+        <div class="col">
+
+          <label for="name" class="form-label">Họ và tên </label>
+          <input type="text" class="form-control" name="name" value="" required/>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="dob" class="form-label">Ngày sinh</label>
+          <input type="date" class="form-control" name="pi[dob]" value="" required/>
+        </div>
+        <div class="col-md-6">
+          <label for="gender" class="form-label">Giới tính</label>
+          <select class="form-select" id="gender" name="pi[gender]" required >
+            <option selected value="">-</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+            <option value="Khác">Khác</option>
+          </select>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-5">
+          <label for="city" class="form-label">Tỉnh/Thành phố</label>
+          <input type="text" class="form-control" name="pi[location][city]" value="" required/>
+        </div>
+        <div class="col-md-7">
+          <label for="district" class="form-label">Quận/Huyện</label>
+          <input type="text" class="form-control" name="pi[location][district]" value="" required/>
+        </div>
+
+        <div>
+          <label for="address" class="form-label">Địa chỉ</label>
+          <input type="text" class="form-control" name="pi[location][address]" value="" required/>
+        </div>
+      </div>
+        
+       <div class="mb-3">
+                <label for="job" class="form-label">Quyền được cấp</label>
+                <div class="form-row">
+                    <div class="form-check form-check-inline col-4">
+                        <input class="form-check-input" type="checkbox" name="isTaxi" id="isTaxi"/>
+                        <label class="form-check-label" for="isHr">Quản lý nhân sự</label>
+                    </div>
+                    <div class="form-check form-check-inline col-4">
+                        <input class="form-check-input" type="checkbox" name="allowedOvernight" id="allowedOvernight"/>
+                        <label class="form-check-label" for="isHr">Quản lý dự án</label>
+                    </div>
+                    <div class="form-check form-check-inline col-4">
+                        <input class="form-check-input" type="checkbox" name="isHr" id="isHr"/>
+                        <label class="form-check-label" for="isHr">Quản lý tài chính</label>
+                    </div>
+                </div>
+            </div>
+      
+       
+        <div class="mb-3">
+          <div class="d-flex justify-content-between mb-2">
+            <label for="members" class="">Cấp trên trực tiếp</label>
+            <div>
+              <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#leaderModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div id="superior"></div>
+        </div>
+      </div>
+      <button class="btn btn-primary">Thêm nhân viên</button>
+    </form>
+  </div>
+
+
+  <script src="/custom/javascripts/formvalidation.js"></script>

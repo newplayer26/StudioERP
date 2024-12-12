@@ -1,0 +1,270 @@
+<% layout('layouts/boilerplate') %>
+    <h3 class="mt-5 mb-3">
+        <a href="/projects" class="tree-menu-link">Quản lý</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        <%= project.title %>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header py-0 d-flex flex-row justify-content-between">
+                    <div>
+                        <ul class="list-inline p-0 m-0">
+                            <li class="list-inline-item p-0 my-0">
+                                <h3 class="card-title">
+                                    <%= project.title %>
+                                </h3>
+                            </li>
+                            <li class="list-inline-item p-0 my-0">
+                                <div class="badge bg-<%= project.progress==100? 'success':'warning' %> mb-3">
+                                    <%= project.progress==100? 'Đã hoàn thành' :'Đang thực hiện' %>
+                                </div>
+                            </li>
+                        </ul>
+
+
+                        </span>
+
+                    </div>
+                    <% if(isMember || currentUser.isProjectManager) {%>
+                        <div class="dropdown pt-2">
+                            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <% if(isLeader || currentUser.isProjectManager) {%>
+                                    <li>
+                                        <a class="dropdown-item" href="/projects/<%= project.id %>/edit"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                            </svg>
+                                            Chỉnh sửa</a>
+                                    </li>
+                                    <% } %>
+                                        <li>
+                                            <a href="/projects/<%= project.id %>/members" class="dropdown-item">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-person-gear" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                                                </svg>
+                                                Quản lý thành viên
+                                            </a>
+                                        </li>
+                                        <% if(isLeader) {%>
+                                            <li>
+
+                                                <a class="dropdown-item text-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteConfirm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                                                    </svg>
+                                                    Xóa</a>
+                                            </li>
+                                            <% } %>
+
+                            </ul>
+                        </div>
+                        <% } %>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <p class="card-text mt-3 mb-5">
+                            <%= project.description %>
+                        </p>
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label for="start" class="h5">Bắt đầu:</label>
+                                <p id="start">
+                                    <%= project.start %>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="end" class="h5">Deadline:</label>
+                                <p id="end">
+                                    <%= project.deadline %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label for="start" class="h5">Phụ trách:</label>
+                                <div class="row">
+                                    <% for(let one of leaders) {%>
+                                        <div class="col-4 col-lg-6">
+                                            <a href="/users/<%= one.id%>" class="avt-link">
+                                                <span>
+                                                    <img src="/uploads/avatars/<%= one.getavatar().fileName %>"
+                                                        alt="user-image" width="32" class="rounded-circle">
+                                                </span>
+                                                <%= one.name %>
+                                            </a>
+                                        </div>
+
+                                        <% } %>
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <label for="end" class="h5">Thành viên:</label>
+                                <div class="row">
+                                    <% for(let one of members) {%>
+                                        <div class="col-4 col-lg-6">
+                                            <a href="/users/<%= one.id%>" class="avt-link">
+                                                <span>
+                                                    <img src="/uploads/avatars/<%=  one.getavatar().fileName %>"
+                                                        alt="user-image" width="32" class="rounded-circle">
+                                                </span>
+                                                <%= one.name %>
+                                            </a>
+                                        </div>
+                                        <% } %>
+
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="p-3 card-body border-top">
+                    <!-- project progress-->
+                    <p class="mb-2" class="h5">
+                        Tiến độ:
+                        <span class="float-end" id="project-progress-bar-value">
+                            <%= project.progress %>%
+                        </span>
+                    </p>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                            aria-valuemax="100" id="project-progress-bar" style="width: <%= project.progress %>%">
+                        </div>
+                        <!-- /.progress-bar -->
+                    </div>
+                    <!-- /.progress -->
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header py-0">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h4 class="card-title">Nhiệm vụ</h4>
+                        <% if(isMember || currentUser.accessLevel <=1) { %>
+                            <div class="pt-2">
+                                <a href="/projects/<%= project.id %>/tasks/new" class="btn btn-light btn-sm"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+                                    </svg></a>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+                <div class="card-body overflow-auto " style="height: <%= tasks.length >= 3? '450px':'auto' %>">
+                    <% for(let task of tasks) {%>
+                        <div class="row justify-content-sm-between border-bottom py-3">
+                            <div class="col-sm-6 mb-2 mb-sm-0">
+                                <ul class="list-inline">
+                                    <li class="list-inline-item my-0">
+                                        <p for="" class="h5 ms-2"><a href="/tasks/<%= task.id %>"
+                                                class="tree-menu-link">
+                                                <%= task.title %>
+                                            </a>
+                                        </p>
+                                    </li>
+                                    <li class="list-inline-item my-0">
+                                        <% if(!task.isRead) { %>
+                                            <div class="badge bg-secondary ms-3">
+                                                Lên nhiệm vụ
+                                            </div>
+                                            <% } else {%>
+                                                <div
+                                                    class="badge bg-<%= task.isComplete? `${task.progress == 100? 'success':'primary'}`:'warning'%> ms-3">
+                                                    <% if (!task.isComplete ) { %>
+                                                        <%= 'Đang thực hiện' %>
+                                                            <% } else {%>
+                                                                <%= task.progress==100? 'Hoàn thành' :'Chờ đánh giá'%>
+                                                                    <% } %>
+                                                </div>
+
+                                                <% } %>
+                                    </li>
+                                </ul>
+
+
+
+                                <ul class=" font-13 mt-3">
+                                    <li class="">Tạo: <%= task.createdAt %>
+                                    </li>
+                                    <li class="">Deadline: <%= task.deadline %>
+                                    </li>
+                                </ul>
+                                <% if(task.Files && task.Files.length){ %>
+                                    <p class="mb-1">File đính kèm:</p>
+                                    <ul class="">
+                                        <% for(let file of task.Files) { %>
+                                            <li><a href="/uploads/tasks/<%= file.fileName %>">
+                                                    <%= file.fileDisplay %>
+                                                </a></li>
+                                            <% } %>
+                                    </ul>
+                                    <% } %>
+                                        <!-- end checkbox -->
+                            </div>
+                            <!-- end col -->
+                            <div class="col-sm-6">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <ul class="list-inline font-13">
+
+                                            <li class="list-inline-item">
+                                                Phụ trách: <a href="/users/<%= task.User.id%>" class="avt-link h5">
+                                                    <span>
+                                                        <img src="/uploads/avatars/<%= task.User.getavatar().fileName %>"
+                                                            alt="user-image" width="32" class="rounded-circle">
+                                                    </span>
+                                                    <%= task.User.name %>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- end .d-flex-->
+                            </div>
+                            <div class="p-3 mb-0">
+                                <!-- project progress-->
+                                <p class="mb-2 h5">
+                                    Tiến độ:
+                                    <span class="float-end">
+                                        <%= task.progress %>%
+                                    </span>
+                                </p>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                                        aria-valuemax="100" style="width: <%= task.progress %>%"></div>
+                                    <!-- /.progress-bar -->
+                                </div>
+                                <!-- /.progress -->
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>

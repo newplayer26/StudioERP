@@ -1,0 +1,68 @@
+<% layout('layouts/boilerplate')%>
+
+  <h3 class="mt-5 mb-3">
+    <a href="/manage#projectTable" class="tree-menu-link">Quản lý</a>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill"
+      viewBox="0 0 16 16">
+      <path
+        d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+    </svg>
+    <a class="tree-menu-link" href="/projects/<%= project.id %>">
+      <%= project.title %>
+    </a>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill"
+      viewBox="0 0 16 16">
+      <path
+        d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+    </svg>
+    Nhiệm vụ mới
+  </h3>
+  <form class="mt-5" action="/projects/<%= project.id %>/dailies" method="POST" enctype="multipart/form-data">
+    <div class="col-lg-6">
+      <div class="mb-3">
+        <label for="projectname" class="form-label">Tiêu đề</label>
+        <input type="text" id="projectname" class="form-control" placeholder="Enter task name" name="title" />
+      </div>
+
+      <div class="mb-3">
+        <label for="project-overview" class="form-label">Nội dung</label>
+        <textarea class="form-control" id="project-overview" rows="5" placeholder="Enter some brief about project.."
+          name="description"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="" class="form-lable">File đính kèm </label>
+        <input type="file" multiple class="form-control" name="files">
+
+      </div>
+      <div class="mb-3">
+        <div class="d-flex justify-content-between mb-2">
+          <label for="leaders" class="">Phụ trách</label>
+        </div>
+
+        <div id="listgroup" class="overflow-auto" style="height: <%= project.Members.length > 5? '250px':'auto' %>">
+          <% project.Members.forEach(user=> { %>
+            <label class="list-group-item list-group-item-action">
+              <input class="form-check-input me-1" type="radio" value="<%= user.id %>" name="user" aria-label="..."
+                required>
+              <a>
+
+                <img src="/uploads/avatars/<%= user.getavatar().fileName %>" class="rounded-circle" width="32" size="32"
+                  alt="">
+                <%= user.name %>
+              </a>
+            </label>
+
+            <% }) %>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-3">
+        <button class="btn btn-primary" type="submit">Tạo</button>
+      </div>
+    </div>
+  </form>
+  </div>

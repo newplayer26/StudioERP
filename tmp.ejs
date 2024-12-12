@@ -1,0 +1,61 @@
+<p class="card-text mb-5">
+    <%= project.description %>
+  </p>
+  <div class="row mb-2">
+    <div class="col-md-4">
+      <label for="start" class="h5">Bắt đầu:</label>
+      <p id="start">
+        <%= project.createdAt %>
+      </p>
+    </div>
+    <div class="col-md-4">
+      <label for="end" class="h5">Deadline:</label>
+      <p id="end">
+        <%= project.deadline %>
+      </p>
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-4">
+      <label for="start" class="h5">Doanh thu(VND):</label>
+      <p id="start">
+        <%= rev %>
+      </p>
+    </div>
+    <div class="col-md-4">
+      <label for="end" class="h5">Chi tiêu(VND):</label>
+      <p id="end">
+        <%= expense %>
+      </p>
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-4">
+      <label for="start" class="h5">Phụ trách:</label>
+      <br>
+      <% for(let one of leaders) {%>
+        <a href="/users/<%= one.id%>" class="avt-link">
+          <span>
+            <img src="/uploads/avatars/<%= one.getavatar().fileName %>" alt="user-image" width="32"
+              class="rounded-circle">
+          </span>
+          <%= one.name %>
+        </a>
+        <% } %>
+    </div>
+    <div class="col-md-4">
+      <label for="end" class="h5">Thành viên:</label>
+      <br>
+      <% for(let one of members) {%>
+        <a href="/users/<%= one.id%>" class="avt-link">
+          <span>
+            <img src="/uploads/avatars/<%=  one.getavatar().fileName %>" alt="user-image" width="32"
+              class="rounded-circle">
+          </span>
+          <%= one.name %>
+        </a>
+        <% } %>
+    </div>
+  </div>

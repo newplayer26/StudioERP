@@ -1,0 +1,40 @@
+<% layout('layouts/boilerplate')%>
+
+<div class="row">
+    <div class="card mt-5 col-lg-6 offset-lg-3 col ">
+       
+        <div class="card-body row">
+            <div class="row">
+                <form
+                action="/users/<%= user.id %>/salary"
+                class="needs-validation col-8 offset-2"
+                method="POST"
+                novalidate
+              >
+              <div class="my-3">
+                <label class=" mb-3" for="username">Tính theo</label>
+                  <select name="isMonthly" class="form-select" id="">
+                    <option value="false" <%= salary.isMontly? '':'selected' %>>Giờ</option>
+                    <option value="true" <%= !salary.isMontly? '':'selected' %>>Tháng</option>
+                  </select>
+              </div>
+                <div class="my-3 ">
+                  
+                  <label for="" class="form-label">Lương(VND)</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="amount"
+                    required 
+                    value="<%= salary.amount %>"
+                  />
+                  
+                </div>
+                <div class="my-5">
+                  <button class="btn btn-info">Cập nhật</button>
+                </div>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>

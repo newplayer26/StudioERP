@@ -1,0 +1,316 @@
+<% layout('layouts/boilerplate')%>
+
+  <div class="row mt-5">
+    <div class="col-lg-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+
+          <img src="/uploads/avatars/<%= user.getavatar().fileName %>" alt="avatar" class="rounded-circle img-fluid"
+            style="width: 150px;
+            height: 150px" />
+          <h5 class="my-3 card-title">
+            <%= user.name %>
+          </h5>
+          <p class="card-text">Từ <%= user.createdAt %>
+          </p>
+          <p>
+            <%= user.title %>
+          </p>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <div>
+            <h5 class="card-title mb-3">Liên hệ</h5>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-4">
+              <p class="mb-0">Email</p>
+            </div>
+            <div class="col-sm-8">
+              <p class="text-muted mb-0">
+                <%= user.email %>
+              </p>
+            </div>
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-sm-4">
+              <p class="mb-0">Số điện thoại</p>
+            </div>
+            <div class="col-sm-8">
+              <p class="text-muted mb-0">
+                <%= user.phone %>
+              </p>
+            </div>
+          </div>
+          <hr />
+        </div>
+      </div>
+      <% if(currentUser.accessLevel==1 || currentUser.isHr || user.id==currentUser.id){ %>
+        <div class="card mb-4 ">
+          <div class="card-header d-flex justify-content-between">
+            <div>
+              <h5 class="card-title mb-3">Lương</h5>
+            </div>
+            <% if(currentUser.accessLevel==1 || currentUser.isHr ){ %>
+            <div>
+              <a href="/users/<%= user.id %>/salary" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg"
+                  width="16" height="16" fill="currentColor" class="bi bi-receipt" viewBox="0 0 16 16">
+                  <path
+                    d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z" />
+                  <path
+                    d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
+                </svg></a>
+            </div>
+            <% } %>
+
+          </div>
+          <div class="card-body">
+            <div class="row my-4">
+              <div class="col-sm-4">
+                <p class="mb-0">Ngân hàng</p>
+              </div>
+              <div class="col-sm-8">
+                <p class="text-muted mb-0">
+                  <%= user.Salary? (user.Salary.bankName && user.Salary.bankName!='' ? user.Salary.bankName: '-' ):'-'
+                    %>
+                </p>
+              </div>
+            </div>
+            <div class="row my-4">
+              <div class="col-sm-4">
+                <p class="mb-0">Số tài khoản</p>
+              </div>
+              <div class="col-sm-8">
+                <p class="text-muted mb-0">
+                  <%= user.Salary? (user.Salary.bankNumber && user.Salary.bankNumber!='' ? user.Salary.bankNumber: '-'
+                    ):'-' %>
+                </p>
+              </div>
+            </div>
+            <div class="row my-4">
+              <div class="col-sm-4">
+                <p class="mb-0">Tính theo</p>
+              </div>
+              <div class="col-sm-8">
+                <p class="text-muted mb-0">
+                  <%= user.Salary? (user.Salary.isMonthly?'Tháng':'Giờ'):'-' %>
+                </p>
+              </div>
+            </div>
+            <div class="row my-4">
+              <div class="col-sm-4">
+                <p class="mb-0">Lương</p>
+              </div>
+              <div class="col-sm-8">
+                <p class="text-muted mb-0">
+                  <%= user.Salary? `${user.Salary.amount} VND`:'-' %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% } %>
+    </div>
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <div>
+            <h5 class="">Thông tin cá nhân</h5>
+          </div>
+          <% if(currentUser.id==user.id){%>
+            <div class="">
+              <a href="/users/<%= user.id %>/edit" class="btn  btn-secondary"><svg xmlns="http://www.w3.org/2000/svg"
+                  width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                  <path
+                    d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
+                </svg></a>
+            </div>
+            <% } %>
+        </div>
+        <div class="card-body">
+
+          <div class="row my-4">
+            <div class="col-sm-3">
+              <p class="mb-0">Họ và tên:</p>
+            </div>
+            <div class="col-sm-9">
+              <p class="text-muted mb-0">
+                <%= user.name %>
+              </p>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div class="col-sm-3">
+              <p class="mb-0">Ngày sinh:</p>
+            </div>
+            <div class="col-sm-9">
+              <p class="text-muted mb-0">
+                <%= (pi &&pi.dob)? pi.dob:'' %>
+              </p>
+            </div>
+          </div>
+          <div class="row my-4">
+            <div class="col-sm-3">
+              <p class="mb-0">Giới tính:</p>
+            </div>
+            <div class="col-sm-9">
+              <p class="text-muted mb-0">
+                <%= (pi && pi.gender)? pi.gender:'' %>
+              </p>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div class="col-sm-3">
+              <p class="mb-0">Địa chỉ:</p>
+            </div>
+            <div class="col-sm-9">
+              <p class="text-muted mb-0">
+                <%= (pi && pi.fullLocation)? pi.fullLocation:'' %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-3 mb-5">
+        <div class="card-header d-flex">
+          <h5 class="me-auto card-title"> Thông tin nhân viên</h5>
+          <% if(currentUser.accessLevel==1 || currentUser.isHr){ %>
+            <div>
+              <a class="btn btn-secondary" href="/users/<%= user.id %>/info"><svg xmlns="http://www.w3.org/2000/svg"
+                  width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path
+                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                  <path fill-rule="evenodd"
+                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                </svg></a>
+            </div>
+            <% } %>
+        </div>
+        <div class="card-body">
+          <div>
+
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">CMND/CCCD:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <p>
+                    <%= user.document %>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">Email:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <p>
+                    <%= user.email %>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">Số điện thoại:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <p>
+                    <%= user.phone %>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">Hợp đồng lao động:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <% if(user.contract){ %>
+                    <a href="/uploads/contracts/<%= user.contract.fileName %>" target="_blank">
+                      <%= user.contract.fileDisplay %>
+                    </a>
+                    <% } else {%>
+                      <p>Chưa có</p>
+                      <% } %>
+                </div>
+
+              </div>
+            </div>
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">Cấp trên phụ trách:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <% if(user.superior) {%>
+                    <a href="/users/<%= user.superior.id %>" class="avt-link">
+                      <%= user.superior.name %><img src="/uploads/avatars/<%= user.superior.getavatar().fileName %>"
+                          alt="" width="40" height="40" class="rounded-circle">
+                    </a>
+                    <% } else { %>
+                      <p>Chưa có</p>
+                      <% } %>
+                </div>
+
+
+              </div>
+            </div>
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">Loại hợp đồng:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <p>
+                    <%= user.isFulltime? 'Full time' :'Part time' %>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">Quyền quản lý nhân sự:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <p>
+                    <%= user.isHr? 'Có' :'Không' %>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+            <div class="row my-3">
+              <div class="col-4">
+                <label for="">Chức vụ:</label>
+              </div>
+              <div class="col-8 d-flex ">
+                <div class="me-auto">
+                  <p>
+                    <%= user.title %>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

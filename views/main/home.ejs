@@ -1,0 +1,387 @@
+<% layout('layouts/boilerplate')%>
+
+
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">THỐNG KÊ</h4>
+                </div>
+                <div class="card-body py-5" id="tasks-all" hidden>
+                    <h5 class="card-subtitle">Nhiệm vụ</h4>
+                        <div id="tasks"></div>
+                        <div class="row mt-5" id="taskData">
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Tổng số</p>
+                                <h3>
+                                    <span class="total text-success"></span>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Đã hoàn thành</p>
+                                <h3>
+                                    <span class="completed text-success"></span>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Đang thực hiện</p>
+                                <h3>
+                                    <span class="ongoing text-secondary"></span>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Lên nhiệm vụ</p>
+                                <h3>
+                                    <span class="not_taken text-secondary"></span>
+                                </h3>
+                            </div>
+                        </div>
+
+                </div>
+                <div class="card-body py-5" id="projects-all">
+                    <h5 class="card-subtitle">Dự án</h4>
+                        <div id="projects"></div>
+                        <div class="row mt-5" id="projectData">
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Tổng số</p>
+                                <h3>
+                                    <span class="total text-success"></span>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Đã hoàn thành</p>
+                                <h3>
+                                    <span class="completed text-success"></span>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Đang thực hiện</p>
+                                <h3>
+                                    <span class="ongoing text-secondary"></span>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-center d-flex flex-column justify-content-between">
+                                <p class="text-muted">Lên kế hoạch</p>
+                                <h3>
+                                    <span class="planning text-secondary"></span>
+                                </h3>
+                            </div>
+                        </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="row gx-2">
+                <div class="col-md-6">
+                    <div class="card" style="height: 300px">
+                        <div class="card-header">
+                            <h4 class="card-title" id="kpi-title">KPI</h4>
+                        </div>
+                        <div class="card-body p-0 accordion overflow-auto">
+                            <% if(!projects.length) { %>
+                                <div class="text-center">
+                                    <p>Chưa có</p>
+                                </div>
+                                <% } else {%>
+                                    <% projects.forEach(el=> { %>
+                                        <div class="accordion-item border-bottom ">
+                                            <div class="accordion-header border-bottom d-flex">
+                                                <div class="flex-grow-1 row my-3 mx-3">
+                                                    <div class="col-sm-6 mb-2 mb-sm-0">
+                                                        <label class="form-check-label" for="task1">
+                                                            <%= el.title.length> 30?
+                                                                `${el.title.substring(0,30)}...`:el.title
+                                                                %>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        class="accordion-button <%= projects.indexOf(el) != 0? 'collapsed':'' %> "
+                                                        type="button" data-bs-toggle="collapse"
+                                                        data-bs-target="#project<%= el.id %>" aria-expanded="false"
+                                                        aria-controls="daily<%= el.id %>">
+                                                    </button>
+                                                </div>
+                                            </div>
+
+
+                                            <div id="project<%= el.id %>"
+                                                class="accordion <%= projects.indexOf(el) != 0? 'collapse':'show' %> ">
+                                                <div class="accordion-body p-0 ps-3">
+                                                    <div class="list-group list-group-flush">
+                                                        <% el.Kpis.forEach(kpi=> { %>
+                                                            <a href="/projects/<%= el.id %>?KPI=true" class="border-0">
+                                                                <div class="list-group-item pb-0 border-0 border-bottom">
+                                                                    <div class="pb-2 mb-2">
+                                                                        <div>
+                                                                            <%= kpi.KpiGroup.title %>: <%= kpi.amount %> <%= kpi.unit %>
+                                                                        </div>
+                                                                        <div>
+                                                                            <p class="mt-2">
+                                                                                Tiến độ
+                                                                                <span class="float-end">
+                                                                                    <%= Math.floor(100 *
+                                                                                        kpi.completedAmount /
+                                                                                        kpi.amount) %>%
+                                                                                </span>
+                                                                            </p>
+
+                                                                            <div class="progress progress-sm">
+                                                                                <div class="progress-bar"
+                                                                                    role="progressbar"
+                                                                                    aria-valuenow="100"
+                                                                                    aria-valuemin="0"
+                                                                                    aria-valuemax="100"
+                                                                                    style="width: <%= Math.floor(100 * kpi.completedAmount / kpi.amount) %>%">
+                                                                                </div>
+                                                                                <!-- /.progress-bar -->
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                </div>
+                                                            </a>
+
+
+                                                            <% }) %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% })} %>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card" style="height: 300px">
+                        <div class="card-header">
+                            <h4 class="card-title">Nhiệm vụ hằng ngày</h4>
+                        </div>
+                        <div class="card-body p-0 accordion overflow-auto">
+                            <% if(!dailies.length) { %>
+                                <div class="text-center">
+                                    <p>Chưa có</p>
+                                </div>
+                                <% } %>
+                                    <% dailies.forEach(el=> { %>
+                                        <div class="accordion-item border-bottom ">
+                                            <div class="accordion-header  d-flex">
+                                                <div class="flex-grow-1 row my-3 mx-3 justify-content-sm-between">
+                                                    <div class="col-sm-6 mb-2 mb-sm-0">
+
+                                                        <label class="form-check-label" for="task1">
+                                                            <%= el.title.length> 30?
+                                                                `${el.title.substring(0,30)}...`:el.title
+                                                                %>
+                                                        </label>
+                                                    </div> <!-- end checkbox -->
+                                                    <!-- end col -->
+                                                </div>
+                                                <div>
+                                                    <button class="accordion-button collapsed" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#daily<%= el.id %>"
+                                                        aria-expanded="false" aria-controls="daily<%= el.id %>">
+                                                    </button>
+                                                </div>
+                                            </div>
+
+
+                                            <div id="daily<%= el.id %>" class="accordion-collapse collapse">
+                                                <div class="accordion-body px-5">
+                                                    <p class="font-15">
+                                                        <%= el.title %>
+                                                    </p>
+                                                    <p class="text-muted font-13 my-3 ">
+                                                        <%= el.description.length> 170? `${el.description.substring(0,
+                                                            170)}...`:el.description %>
+                                                            <sub><a href="/projects/<%= el.Project.id %>"
+                                                                    class="sub-link">Chi
+                                                                    tiết</a></sub>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2 gx-2">
+                <div class="col">
+                    <div class="card" style="height: <%= tasks.length >= 4? '450px':'auto' %>">
+                        <div class="card-header">
+                            <h4 class="card-title">Nhiệm vụ</h4>
+                        </div>
+                        <div class="accordion-flush card-body overflow-auto">
+                            <% if(!tasks.length) { %>
+                                <div class="text-center">
+                                    <p>Chưa có</p>
+                                </div>
+                                <% } %>
+                                    <% tasks.forEach(el=> { %>
+
+                                        <div class="accordion-item border-bottom ">
+                                            <div class="accordion-header  d-flex">
+                                                <div class="flex-grow-1 my-3 mx-3 row justify-content-sm-between">
+                                                    <div class="col-sm-6 mb-2 mb-sm-0">
+                                                        <div class="form-check">
+                                                            <% if(!el.isRead) {%>
+                                                                <span class="badge bg-secondary">Lên nhiệm vụ</span>
+                                                                <% } else {%>
+                                                                    <% if(el.isComplete){ %>
+                                                                        <% if(el.progress==100) { %>
+                                                                            <span class="badge bg-success">Hoàn
+                                                                                thành</span>
+                                                                            <% } else {%>
+                                                                                <span class="badge bg-primary">Chờ đánh
+                                                                                    giá</span>
+                                                                                <% } %>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            class="badge bg-warning">Đang
+                                                                                            thực
+                                                                                            hiện</span>
+                                                                                        <% } %>
+                                                                                            <% } %>
+                                                                                                <label
+                                                                                                    class="form-check-label"
+                                                                                                    for="task1">
+                                                                                                    <%= el.title.length>
+                                                                                                        30?
+                                                                                                        `${el.title.substring(0,30)}...`:el.title
+                                                                                                        %>
+                                                                                                </label>
+                                                        </div> <!-- end checkbox -->
+                                                    </div> <!-- end col -->
+                                                    <div class="col-sm-6">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                <ul class="list-inline font-13 text-end">
+                                                                    <li class="list-inline-item">
+                                                                        <i class='bx bx-calendar'></i>
+                                                                        <%= el.createdAt %> - <%= el.deadline %>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div> <!-- end .d-flex-->
+                                                    </div> <!-- end col -->
+                                                </div>
+                                                <div>
+                                                    <button class="accordion-button collapsed" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#task<%= el.id %>"
+                                                        aria-expanded="false" aria-controls="task<%= el.id %>">
+                                                    </button>
+                                                </div>
+                                            </div>
+
+
+                                            <div id="task<%= el.id %>" class="accordion-collapse collapse">
+                                                <div class="accordion-body px-5">
+                                                    <p class="font-15">
+                                                        <%= el.title %>
+                                                    </p>
+                                                    <p class="text-muted font-13 my-3 ">
+                                                        <%= el.description.length> 170? `${el.description.substring(0,
+                                                            170)}...`:el.description %>
+                                                            <sub><a href="/tasks/<%= el.id %>" class="sub-link">Chi
+                                                                    tiết</a></sub>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <% }) %>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+
+
+
+
+    <script>
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawTaskChart);
+        google.charts.setOnLoadCallback(drawProjectChart);
+
+
+        async function drawTaskChart() {
+            const response = await fetch('/home/tasks', {
+                method: 'get'
+            })
+            const pieChartData = await response.json();
+            if (pieChartData.ongoing + pieChartData.completed + pieChartData.not_taken == 0) {
+
+                return;
+            }
+            document.getElementById('tasks-all').hidden = false;
+            const dataRow = document.getElementById('taskData');
+            dataRow.querySelector('.total').innerHTML = `${pieChartData.completed + pieChartData.ongoing + pieChartData.not_taken}`
+            dataRow.querySelector('.completed').innerHTML = `${pieChartData.completed}`
+            dataRow.querySelector('.ongoing').innerHTML = `${pieChartData.ongoing}`
+            dataRow.querySelector('.not_taken').innerHTML = `${pieChartData.not_taken}`
+            // Define the chart to be drawn.
+            var data = google.visualization.arrayToDataTable([
+                ['Trạng thái', 'Số lượng'],
+                ['Hoàn thành', pieChartData.completed],
+                ['Đang thực hiện', pieChartData.ongoing],
+                ['Lên nhiệm vụ', pieChartData.not_taken],
+            ]);
+
+            var options = {
+                pieHole: 0.7,
+                pieSliceText: 'none',
+                chartArea: { left: 20, top: 0, width: '100%', height: '100%' },
+                colors: ['#80ed99', '#ffd60a', '#9a8c98']
+            };
+            // Instantiate and draw the chart.
+            var chart = new google.visualization.PieChart(document.getElementById('tasks'));
+            chart.draw(data, options);
+        }
+        async function drawProjectChart() {
+            const response = await fetch('/home/projects', { method: 'get' });
+            const pieProjectData = await response.json();
+            const dataRow = document.getElementById('projectData');
+            dataRow.querySelector('.total').innerHTML = `${pieProjectData.completed + pieProjectData.ongoing + pieProjectData.planning}`
+            dataRow.querySelector('.completed').innerHTML = `${pieProjectData.completed}`
+            dataRow.querySelector('.ongoing').innerHTML = `${pieProjectData.ongoing}`
+            dataRow.querySelector('.planning').innerHTML = `${pieProjectData.planning}`
+            // Define the chart to be drawn.
+            var data = google.visualization.arrayToDataTable([
+                ['Trạng thái', 'Số lượng'],
+                ['Hoàn thành', pieProjectData.completed],
+                ['Đang thực hiện', pieProjectData.ongoing],
+                ['Lên kế hoạch', pieProjectData.planning],
+
+            ]);
+
+            var options = {
+                pieHole: 0.7,
+                pieSliceText: 'none',
+                chartArea: { left: 20, top: 0, width: '100%', height: '100%' },
+                colors: ['#80ed99', '#ffd60a', '#9a8c98']
+            };
+            // Instantiate and draw the chart.
+            var chart = new google.visualization.PieChart(document.getElementById('projects'));
+            chart.draw(data, options);
+        }
+    </script>
+    <script>
+        $(document).ready(() => {
+            const date = new Date();
+            document.querySelector('#kpi-title').innerText = `KPI tháng ${date.getMonth() + 1}/${date.getFullYear()}`
+        })
+    </script>

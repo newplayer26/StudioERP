@@ -1,0 +1,293 @@
+<% layout('layouts/boilerplate')%>
+
+    <div class="modal fade" id="leaderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tìm nhân viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form onsubmit="search(event)" class="d-flex">
+
+                        <input type="text" id="searchInput" class="form-control " placeholder="Search..." />
+
+                        <button type="submit" id="queryBtn" class="btn btn-primary"><i
+                                class="fa fa-search"></i></button>
+
+                    </form>
+                    <div class="card">
+                        <div class="card-body list" id="results">
+                            <div id="results" class="list-group"></div>
+                        </div>
+                    </div>
+                    <script>
+                        async function search(event) {
+                            event.preventDefault();
+                            const btn = document.getElementById('queryBtn');
+                            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                            const resHolder = document.getElementById("results");
+                            resHolder.innerHTML = "";
+                            const query = document.getElementById("searchInput").value;
+                            let url = `<%= process.env.DOMAIN_NAME %>/search/users?search=${query}&level=3`;
+                            const response = await fetch(url, {
+                                method: "POST",
+                                body: JSON.stringify({query: query}),
+                            });
+                            const data = await response.json();
+                            btn.innerHTML = `<i class="fa fa-search"></i>`;
+                            const leaders = document.getElementById("leaders");
+                            const members = document.getElementById("members");
+                            for (let one of data) {
+                                const newDiv = document.createElement("div");
+                                const user = document.createElement("a");
+                                user.classList.add("list-group-item", "list-group-item-action");
+                                user.innerHTML = `<span>
+                <img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+                width="32"
+                height="32"
+                class="rounded-circle">
+              </span>
+              ${one.name}`;
+
+                                user.addEventListener("click", () => {
+                                    const leaderDiv = document.createElement("div");
+                                    leaderDiv.classList.add(
+                                        "alert",
+                                        "alert-light",
+                                        "alert-dismissible",
+                                        "fade",
+                                        "show",
+                                        "my-0",
+                                        'border'
+                                    );
+                                    leaderDiv.innerHTML = `
+                <a class="avt-link">
+
+<span>
+<img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+width="32"
+height="32"
+class="rounded-circle">
+</span>
+${one.name}
+<input
+  type="text"
+  name="leaders[]"
+  value="${one.id}"
+  hidden
+/>
+</a>
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                                    leaders.appendChild(leaderDiv);
+                                    const memberDiv = document.createElement("div");
+                                    memberDiv.classList.add(
+                                        "alert",
+                                        "alert-light",
+                                        "alert-dismissible",
+                                        "fade",
+                                        "show",
+                                        'my-0',
+                                        'border'
+                                    );
+                                    memberDiv.innerHTML = `
+                <a class="avt-link">
+
+<span>
+<img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+width="32"
+height="32"
+class="rounded-circle">
+</span>
+${one.name}
+<input
+  type="text"
+  name="members[]"
+  value="${one.id}"
+  hidden
+/>
+</a>
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                                    members.appendChild(memberDiv);
+                                });
+                                newDiv.appendChild(user);
+                                resHolder.appendChild(newDiv);
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tìm nhân viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form onsubmit="search2(event)" class="d-flex">
+
+                        <input type="text" id="searchInput2" class="form-control " placeholder="Search..." />
+
+                        <button type="submit" id="queryBtn2" class="btn btn-primary"><i
+                                class="fa fa-search"></i></button>
+
+                    </form>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="results2" class="list-group"></div>
+                        </div>
+                    </div>
+                    <script>
+                        async function search2(event) {
+                            event.preventDefault();
+                            const btn = document.getElementById('queryBtn2');
+                            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                            const resHolder = document.getElementById("results2");
+                            resHolder.innerHTML = "";
+                            const query = document.getElementById("searchInput2").value;
+                            let url = `<%= process.env.DOMAIN_NAME %>/search/users?search=${query}&level=3`;
+                            const response = await fetch(url, {
+                                method: "POST",
+                                body: JSON.stringify({query: query}),
+                            });
+                            const data = await response.json();
+                            btn.innerHTML = `<i class="fa fa-search"></i>`;
+                            const members = document.getElementById("members");
+                            for (let one of data) {
+                                const newDiv = document.createElement("div");
+                                const user = document.createElement("a");
+                                user.classList.add("list-group-item", "list-group-item-action");
+                                user.innerHTML = `<span>
+                <img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+                width="32"
+                height="32"
+                class="rounded-circle">
+              </span>
+              ${one.name}`;
+                                user.addEventListener("click", () => {
+                                    const memberDiv = document.createElement("div");
+                                    memberDiv.classList.add(
+                                        "alert",
+                                        "alert-light",
+                                        "alert-dismissible",
+                                        "fade",
+                                        "show",
+                                        'border',
+                                        'my-1'
+                                    );
+                                    memberDiv.innerHTML = `
+                <a class="avt-link">
+
+<span>
+<img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+width="32"
+height="32"
+class="rounded-circle">
+</span>
+${one.name}
+<input
+  type="text"
+  name="members[]"
+  value="${one.id}"
+  hidden
+/>
+</a>
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                                    members.appendChild(memberDiv);
+                                });
+                                newDiv.appendChild(user);
+                                resHolder.appendChild(newDiv);
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5 mb-3">
+        <a href="/manage/projects" class="tree-menu-link">Quản lý</a> <svg xmlns="http://www.w3.org/2000/svg" width="16"
+            height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        Thêm dự án
+
+    </h3>
+
+    <div class="row">
+        <form class="mt-5 col-xl-7" action="/projects" method="POST" class="needs-validate" novalidate>
+            <div class="">
+                <div class="mb-3">
+                    <label for="projectname" class="form-label">Tiêu đề</label>
+                    <input type="text" id="projectname" class="form-control" placeholder="Enter project name"
+                        name="title" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="project-overview" class="form-label">Nội dung</label>
+                    <textarea class="form-control" id="project-overview" rows="5"
+                        placeholder="Enter some brief about project.." name="description" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="" class="form-label">Doanh thu dự kiến</label>
+                    <input type="number" id="projectedRevenue" class="form-control" name="projectedRevenue" required />
+                </div>
+                <!-- Date View -->
+                <div class="mb-3 position-relative row" id="datepicker1">
+                    <div class="mb-3 position-relative col-6">
+                        <label for="created" class="form-label">Bắt đầu</label>
+                        <input type="datetime-local" class="form-control" id="created" name="start" required />
+                    </div>
+
+                    <div class="mb-3 position-relative col-6" id="datepicker2">
+                        <label for="deadline" class="form-label">Deadline</label>
+                        <input type="datetime-local" id="deadline" class="form-control" name="deadline" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <label for="leaders" class="">Phụ trách</label>
+                            <div>
+                                <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#leaderModal">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div id="leaders"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <label for="leaders" class="">Thành viên</label>
+                            <div>
+                                <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#memberModal">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div id="members"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3">
+                    <button class="btn btn-primary" type="submit">Tạo dự án</button>
+                </div>
+            </div>
+        </form>
+        <div class="col-xl-5 mt-5"></div>
+    </div>

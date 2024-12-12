@@ -1,0 +1,17 @@
+<form onsubmit="search(event)">
+  <input type="text" id="searchInput" placeholder="Search..." />
+  <button type="submit">Search</button>
+</form>
+<script>
+    async function search(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value;
+    
+        let url = `http://localhost:3000/search/users?search=${query}`;
+        const response = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify({query: query})
+        });
+        console.log(response.json());
+    }
+</script>

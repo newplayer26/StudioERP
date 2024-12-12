@@ -1,0 +1,102 @@
+<% layout('layouts/boilerplate') %>
+    <h3 class="mt-5 mb-3">Dự án</h3>
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="col-6 offset-3">
+                        <input type="month" id="projectMonthPicker" class="form-control">
+                    </div>
+                </div>
+                <div class="card-body py-5" id="tasks-all">
+                    <div id="projects"></div>
+                    <div class="row mt-5" id="projectData">
+                        <div class="col-3 text-center d-flex flex-column
+                            justify-content-between">
+                            <p class="text-muted">Tổng số</p>
+                            <h3>
+                                <span class="total text-success"></span>
+                            </h3>
+                        </div>
+                        <div class="col-3 text-center d-flex flex-column
+                            justify-content-between">
+                            <p class="text-muted">Đã hoàn thành</p>
+                            <h3>
+                                <span class="completed text-success"></span>
+                            </h3>
+                        </div>
+                        <div class="col-3 text-center d-flex flex-column
+                            justify-content-between">
+                            <p class="text-muted">Đúng tiến độ</p>
+                            <h3>
+                                <span class="ongoing text-secondary"></span>
+                            </h3>
+                        </div>
+                        <div class="col-3 text-center d-flex flex-column
+                            justify-content-between">
+                            <p class="text-muted">Chậm tiến độ</p>
+                            <h3>
+                                <span class="behind text-secondary"></span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $(document).ready(async function () {
+            google.charts.load('current', { packages: ['corechart'] });
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const currentYearMonth = `${year}-${month}`;
+            async function drawProjectChart(m) {
+                document.getElementById('projects').innerHTML = '';
+                console.dir( document.getElementById('projects'))
+                const response = await fetch(`/manage/chart/projects?month=${m}`, { method: 'get' });
+                const pieProjectData = await response.json();
+                console.log(pieProjectData)
+                const dataRow = document.getElementById('projectData');
+                dataRow.querySelector('.total').innerHTML = `${pieProjectData.completed + pieProjectData.ongoing}`
+                dataRow.querySelector('.completed').innerHTML = `${pieProjectData.completed}`
+                dataRow.querySelector('.ongoing').innerHTML = `${pieProjectData.ongoing}`
+                // Define the chart to be drawn.
+                dataRow.querySelector('.behind').innerHTML = `${pieProjectData.behind}`
+                // Define the chart to be drawn.
+                console.log('done')
+                var data = google.visualization.arrayToDataTable([
+                    ['Trạng thái', 'Số lượng'],
+                    ['Hoàn thành', pieProjectData.completed],
+                    ['Đúng tiến độ', pieProjectData.ongoing],
+                    ['Chậm tiến độ', pieProjectData.behind],
+                ]);
+
+                var options = {
+                    pieHole: 0.7,
+                    pieSliceText: 'none',
+                    chartArea: { left: 20, top: 0, width: '100%', height: '100%' },
+                    colors: ['#80ed99', '#ffd60a', '#9a8c98']
+                };
+                // Instantiate and draw the chart.
+                var chart = new google.visualization.PieChart(document.getElementById('projects'));
+                chart.draw(data, options);
+
+            }
+            await google.charts.setOnLoadCallback(async () => {
+                return await drawProjectChart(currentYearMonth);
+            });
+            $('#projectMonthPicker').on('change', async function () {
+                const value = this.value;
+                await google.charts.setOnLoadCallback(async () => {
+                    return await drawProjectChart(value);
+                });
+            })
+        })
+
+
+
+
+    </script>

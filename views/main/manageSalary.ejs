@@ -1,0 +1,163 @@
+<% layout('layouts/boilerplate')%>
+
+    <div class="d-flex justify-content-between mt-5 mb-2">
+        <label for="employeeTableTable" class="h2">Chấm công</label>
+    </div>
+    <div class="manageTable">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center mt-5 mb-3 row">
+                    <div class="col-lg-2 offset-lg-5 col-4 offset-4">
+                        <input type="date" id="datePicker" class="form-control" name="" />
+                    </div>
+                </div>
+                <table id="timekeeptable" class="display" style="width:100%">
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="d-flex justify-content-between mt-5 mb-2">
+        <label for="employeeTableTable" class="h2 me-auto">Bảng lương</label>
+
+    </div>
+
+    <div class="manageTable">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center mt-5 mb-3 row">
+                    <div class="col-lg-2 offset-lg-5 col-4 offset-4">
+                        <input type="month" id="monthPickerSalary" class="form-control" name="" />
+                    </div>
+                </div>
+                <table id="salaryTable" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                          <th>STT</th>
+                          <th>Họ và tên</th>
+                          <th>Lương(VND)</th>
+                          <th>Tính theo</th>
+                          <th>Thời gian làm việc (giờ)</th>
+                          <th>Chi phí (VND)</th>
+                          <th>Tổng (VND)</th>
+                          <th>Ngân hàng</th>
+                          <th>Số tài khoản</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- Rows go here -->
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="6"></td>
+                          <td>Tổng: <span id="total"></span> VND</td>
+                          <td colspan="2"></td>
+                        </tr>
+                      </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(async function () {
+            const table = $('#timekeeptable').DataTable({
+                ordering: true,
+                columns: [
+                    {
+                        title: 'STT',
+                        orderable: false
+                    },
+                    { title: 'Tên' },
+                    { title: 'Ngày' },
+                    { title: 'Bắt đầu' },
+                    { title: 'Kết thúc' },
+                ],
+                order: [],
+                responsive: true
+            });
+            async function fetchInfo(value) {
+                table.clear();
+                const date = value;
+                let url = `/manage/timekeep/users?search=${date}`;
+                const response = await fetch(url, {
+                    method: 'get',
+                })
+                const data = await response.json();
+                data.forEach(el => {
+                    console.log(el);
+                    table.row.add(el).draw(false);
+
+                });
+            }
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+
+            const formattedDate = `${year}-${month}-${day}`;
+            document.querySelector('#datePicker').value = formattedDate;
+
+            await fetchInfo(formattedDate);
+            // const table = $('#timekeeptable').DataTable({
+            //   lengthMenu: [
+            //     [5, 10, 20, -1],
+            //     [5, 10, 20, 'All'],
+            //   ],
+            // });
+            $('#datePicker').on('change', async function () {
+
+                await fetchInfo(this.value);
+
+            })
+            const table2 = $('#salaryTable').DataTable({
+                columns: [
+                    {
+                        title: 'STT',
+                    },
+                    { title: 'Họ và tên' },
+                    { title: 'Lương(VND)' ,render: $.fn.dataTable.render.number('.', ',', 0, '') },
+                    { title: 'Tính theo' },
+                    { title: 'Thời gian làm việc (giờ)' },
+                    { title: 'Chi phí (VND)', render: $.fn.dataTable.render.number('.', ',', 0, '') },
+                    { title: 'Tổng (VND)', render: $.fn.dataTable.render.number('.', ',', 0, '') },
+                    { title: 'Ngân hàng' },
+                    { title: 'Số tài khoản' },
+                ],
+                dom: 'lfrtipT',
+                footerCallback: function (row, data, start, end, display) {
+                    const api = this.api();
+                    const totalCol = api.column(6);
+                    const total = totalCol.data().reduce((acc, val) => acc + parseInt(val), 0);
+
+                    $(totalCol.footer()).html(`${total.toLocaleString()}`);
+                },
+                responsive: true
+            });
+            async function fetchInfoSalary(value) {
+                const date = value;
+                let url = `<%= process.env.DOMAIN_NAME %>/manage/salary/fetch?month=${value}`;
+                const response = await fetch(url, {
+                    method: 'get',
+                })
+                const data = await response.json();
+                console.log(data)
+                data.forEach(el => {
+                    console.log(el);
+                    table2.row.add(el).draw(false);
+                });
+            }
+            $('#monthPickerSalary').on('change', async function () {
+                table2.clear().draw();
+                await fetchInfoSalary(this.value);
+            })
+            document.querySelector('#monthPickerSalary').value = `${year}-${month}`;
+            await fetchInfoSalary(`${year}-${month}`);
+
+
+        })
+
+
+    </script>

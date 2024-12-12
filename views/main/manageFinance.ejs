@@ -1,0 +1,269 @@
+<% layout('layouts/boilerplate')%>
+
+    <div class="d-flex justify-content-between mt-5 mb-2">
+        <label for="employeeTableTable" class="h2 me-auto">Báo cáo tài chính</label>
+        <div class="">
+            <a href="/manage/finance/new" class="btn btn-primary"><i class='bx bx-list-plus'></i></a>
+        </div>
+    </div>
+
+    <div class="manageTable">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Thống kê</h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center mt-5 mb-3 d-flex justify-content-center">
+                    <div>
+                        <form onsubmit="fetchChartInfo(event)" id="daterange">
+                            <div>
+                                <select name="options" id="" class="form-select daterange-select">
+                                    <option value="month" selected>Theo tháng</option>
+                                    <option value="date">Theo ngày</option>
+                                </select>
+                            </div>
+                            <div class=" input-daterange d-flex flex-md-row flex-column">
+                                <div class=" input-group mx-0">
+                                    <div class="input-group-text">Từ</div>
+                                    <input type="month" class="form-control daterange-comp" name="from" value="">
+                                </div>
+                                <div class=" input-group mx-0">
+                                    <div class="input-group-text">Tới</div>
+                                    <input type="month" class="form-control daterange-comp" name="to" value="">
+                                </div>
+
+                            </div>
+                            <button hidden></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-lg-4 mb-3">
+                        <div class="text-center mb-3">
+                            <h4>Doanh thu</h4>
+                        </div>
+                        <div id="pieChartRev"></div>
+                    </div>
+                    <div class="col-lg-4 mb-3">
+                        <div class="text-center mb-3">
+                            <h4>Chi phí</h4>
+                        </div>
+                        <div id="pieChartExpense"></div>
+                    </div>
+                    <div class="col-lg-4 mb-3">
+                        <div class="text-center mb-3">
+                            <h4>Lợi nhuận</h4>
+                        </div>
+                        <div id="pieChartProfit"></div>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="d-flex flex-column">
+                        <!-- <div class="col-lg-6 offset-lg-3 col-8 offset-2"> -->
+                        <div id="barChart">
+
+                        </div>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="manageTable">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Báo cáo</h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center mt-5 mb-3 row">
+                    <div class="col-lg-2 offset-lg-5 col-4 offset-4">
+
+                        <input type="month" id="monthPickerFinance" class="form-control" name="" />
+                    </div>
+                </div>
+                <table id="financetable" class="display" style="width:100%">
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        google.charts.load('current', { packages: ['corechart', 'bar'] });
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+
+
+
+
+        function drawPieCharts(input) {
+            let revData = [['Dự án', 'link', 'Doanh thu']]
+            let expData = [['Dự án', 'link', 'Chi phí']]
+            let profData = [['Dự án', 'link', 'Lợi nhuận']]
+            for (const [id, value] of Object.entries(input)) {
+                revData.push([value.title, id != 'other' ? `/projects/${id}?chart=true` : '', value.revenue])
+                expData.push([value.title, id != 'other' ? `/projects/${id}?chart=true` : '', value.expense])
+                if (value.revenue > value.expense) {
+                    profData.push([value.title, id != 'other' ? `/projects/${id}?chart=true` : '', value.revenue - value.expense])
+                }
+            }
+            var revTbl = google.visualization.arrayToDataTable(revData);
+            var expTbl = google.visualization.arrayToDataTable(expData);
+            var profTbl = google.visualization.arrayToDataTable(profData);
+            function returnOptions(title) {
+                return {
+                    pieHole: 0.7,
+                    pieSliceText: 'none',
+                    chartArea: { left: 20, top: 0, width: '100%', height: '100%' },
+                    title: 'Doanh thu',
+                    legend: {
+                        textStyle: {
+                            fontSize: 16
+                        }
+                    }
+
+                }
+            }
+            const revView = new google.visualization.DataView(revTbl);
+            revView.setColumns([0, 2])
+            const expView = new google.visualization.DataView(expTbl);
+            expView.setColumns([0, 2])
+            const profView = new google.visualization.DataView(profTbl);
+            profView.setColumns([0, 2])
+
+            // Instantiate and draw the chart.
+            var revChart = new google.visualization.PieChart(document.getElementById('pieChartRev'));
+            var expChart = new google.visualization.PieChart(document.getElementById('pieChartExpense'));
+            var profChart = new google.visualization.PieChart(document.getElementById('pieChartProfit'));
+            revChart.draw(revView, returnOptions('Doanh thu'));
+            expChart.draw(expView, returnOptions('Chi phí'));
+            profChart.draw(profView, returnOptions('Lợi nhuận'));
+            var selectHandler = function (e, tbl, chart) {
+                window.location = tbl.getValue(chart.getSelection()[0]['row'], 1);
+            }
+
+            // Add our selection handler.
+            google.visualization.events.addListener(revChart, 'select', () => {
+                selectHandler(null, revTbl, revChart)
+            });
+            google.visualization.events.addListener(expChart, 'select', () => {
+                selectHandler(null, expTbl, expChart)
+            });
+            google.visualization.events.addListener(profChart, 'select', () => {
+                selectHandler(null, profTbl, profChart)
+            });
+        }
+        function drawColChart(input) {
+            let barData = [['', 'Doanh thu', 'Chi phí', 'Lợi nhuận']]
+            for (const [date, value] of Object.entries(input)) {
+                barData.push([date, value.revenue, value.expense, value.revenue > value.expense ? value.revenue - value.expense : 0])
+            }
+            var data = google.visualization.arrayToDataTable(barData);
+
+            var options = {
+                title: '',
+                // curveType: 'function'
+                height: 500,
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('barChart'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+        }
+
+
+
+        async function fetchChartInfo(event) {
+            event.preventDefault();
+            const form = event.target; // get the form element from the event
+
+            const formData = new FormData(form); // create a new FormData object from the form
+            const option = formData.get('options');
+            const from = formData.get("from"); // get the value of the "from" input
+            const to = formData.get("to"); // get the value of the "to" input
+            if (from && to) {
+                const response = await fetch(`/manage/finance/charts?from=${from}&to=${to}&option=${option}`, {
+                    method: 'get'
+                })
+                const data = await response.json();
+                console.log(data);
+                google.charts.setOnLoadCallback(() => {
+                    drawPieCharts(data[0]);
+                    drawColChart(data[1])
+                });
+            }
+
+        }
+
+
+        $(".daterange-comp").on('change', function () {
+            document.querySelector('#daterange').querySelector('button').click();
+        })
+        $(".daterange-select").on('change', function () {
+
+            document.querySelectorAll('.daterange-comp').forEach(el => el.type = this.value)
+
+        })
+
+
+
+        // async function fetchChartInfo(value) {
+        //     const range = value;
+        //     const response = await fetch(`/manage/finance/charts?range=${range}`, {
+        //         method: 'get'
+        //     })
+        //     const data = await response.json();
+        //     console.log(data);
+        // }
+
+
+        document.querySelector("input[name='to']").value = `${year}-${month}`;
+        document.querySelector("input[name='from']").value = `${year - 1}-${month}`;
+        document.querySelector('#daterange').querySelector('button').click();
+
+
+
+            $(document).ready(async function () {
+                const table1 = $('#financetable').DataTable({
+                    ordering: true
+                    ,
+                    columns: [
+                        { title: 'Người tạo' },
+                        { title: 'Ngày tạo', },
+                        { title: 'Tiêu đề' },
+                        { title: 'Dự án' },
+                        { title: 'Ghi chú' },
+                        { title: 'Loại' },
+                        { title: 'Số tiền', render: $.fn.dataTable.render.number('.', ',', 0, '') },
+                        { title: 'File đính kèm' },
+                        { title: '' },
+                    ],
+                    order: [],
+                    responsive: true
+                });
+
+                async function fetchInfoFinance(value) {
+                    const date = value;
+                    let url = `<%= process.env.DOMAIN_NAME %>/manage/finance/fetch?month=${value}`;
+                    const response = await fetch(url, {
+                        method: 'get',
+                    })
+                    const data = await response.json();
+                    console.log(data);
+                    data.forEach(el => {
+                        table1.row.add(el).draw(false);
+                    });
+                }
+
+                $('#monthPickerFinance').on('change', async function () {
+                    table1.clear().draw();
+                    await fetchInfoFinance(this.value);
+
+                })
+                document.querySelector('#monthPickerFinance').value = `${year}-${month}`;
+                await fetchInfoFinance(`${year}-${month}`);
+            })
+    </script>

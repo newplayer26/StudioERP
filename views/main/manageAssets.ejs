@@ -1,0 +1,87 @@
+<% layout('layouts/boilerplate')%>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAssetForm" method="post">
+                        <div class="form-row">
+                            <label for="" class="form-label">
+                                Mô tả
+                            </label>
+                            <input type="text" id="title" name="title" class="form-control">
+                        </div>
+                        <div class="form-row">
+                            <label for="" class="form-label">
+                                Chú thích
+                            </label>
+                            <textarea class="form-control" id="description" name="description" id="" cols="30" rows="10"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label for="" class="form-label">
+                                Xem được bởi
+                            </label>
+                            <select name="accessLevel" id="accessLevel" class="form-select" id="">
+                                <option value="1">Giám đốc</option>
+                                <option value="2">Quản lý</option>
+                                <option value="3">Nhân viên</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('editAssetForm').submit()">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-5 mb-2">
+        <label for="assetTable" class="h2 me-auto">Tài sản</label>
+        <div class="">
+            <a  href="/manage/assets/new" class="btn btn-primary toggle-new"><i class='bx bx-list-plus'></i></a>
+        </div>
+    </div>
+
+    <div class="manageTable">
+        <div class="card">
+            <div class="card-body">
+                <table id="assettable" class="display" style="width:100%">
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(async function () {
+            const table1 = $('#assettable').DataTable({
+                columns: [
+                    {
+                        title: 'STT',
+                    },
+                    { title: 'Mô tả' },
+                    { title: 'Dự án'},
+                    { title: 'Chú thích' },
+                    { title: '' }
+                ],
+
+            });
+            async function fetchInfoAssets() {
+                let url = `<%= process.env.DOMAIN_NAME %>/manage/assets/fetch`;
+                const response = await fetch(url, {
+                    method: 'get',
+                })
+                const data = await response.json();
+                data.forEach(el => {
+                    table1.row.add(el).draw(false);
+                });
+            }
+            await fetchInfoAssets();
+        
+        })
+
+    </script>;

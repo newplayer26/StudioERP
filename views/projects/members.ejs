@@ -1,0 +1,282 @@
+<% layout('layouts/boilerplate') %>
+    <div class="modal fade" id="deleteConfirm" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalTitle">Xác nhận</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/projects/<%= project.id %>/deletemember?_method=DELETE" method="post"
+                        id="innerModalDelete">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button " class="btn btn-danger confirm-btn">Xóa khỏi dự án</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/projects/<%= project.id %>/editmemberrights" id="innerModalEdit" method="post">
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button " class="btn btn-success update-btn" onclick="document.getElementById('innerModalEdit').submit()">Cập nhật</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="searchModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalTitle">Tìm nhân viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form onsubmit="search2(event)" class="d-flex">
+
+                        <input type="text" id="searchInput2" class="form-control " placeholder="Search..." />
+
+                        <button type="submit" id="queryBtn2" class="btn btn-primary"><i
+                                class="fa fa-search"></i></button>
+
+                    </form>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="results2" class="list-group"></div>
+                        </div>
+                    </div>
+                    <script>
+                        async function search2(event) {
+                            event.preventDefault();
+                            const btn = document.getElementById('queryBtn2');
+                            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                            const resHolder = document.getElementById("results2");
+                            resHolder.innerHTML = "";
+                            const query = document.getElementById("searchInput2").value;
+                            let url = `<%= process.env.DOMAIN_NAME %>/search/users?search=${query}&level=3`;
+                            const response = await fetch(url, {
+                                method: "POST",
+                                body: JSON.stringify({ query: query }),
+                            });
+                            const data = await response.json();
+                            btn.innerHTML = `<i class="fa fa-search"></i>`;
+                            const members = document.getElementById("members");
+                            for (let one of data) {
+                                const newDiv = document.createElement("div");
+                                const user = document.createElement("a");
+                                user.classList.add("list-group-item", "list-group-item-action");
+                                user.innerHTML = `<span>
+                <img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+                width="32"
+                height="32"
+                class="rounded-circle">
+              </span>
+              ${one.name}`;
+                                user.addEventListener("click", () => {
+                                    const memberDiv = document.createElement("div");
+                                    memberDiv.classList.add(
+                                        "alert",
+                                        "alert-light",
+                                        "alert-dismissible",
+                                        "fade",
+                                        "show",
+                                        'my-0',
+                                        'py-2'
+                                    );
+                                    memberDiv.innerHTML = `
+                <a class="avt-link">
+<span>
+<img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+width="32"
+height="32"
+class="rounded-circle">
+</span>
+${one.name}
+<input
+  type="text"
+  name="members['${one.id}'][id]"
+  value="${one.id}"
+  hidden
+  />
+  <select class="form-select form-select-sm mx-5" name="members['${one.id}'][isLeader]" aria-label=".form-select-sm example">
+  <option value="true">Quản lý</option>
+  <option value="false" selected>Thành viên</option>
+</select>
+</a>
+
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                                    members.insertBefore(memberDiv, members.lastChild);
+
+                                });
+                                newDiv.appendChild(user);
+                                resHolder.appendChild(newDiv);
+                            }
+                            document.getElementById('newMembers').hidden = false;
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h3 class="mt-5 mb-3">
+        <a href="/manage/projects" class="tree-menu-link">Quản lý</a> <svg xmlns="http://www.w3.org/2000/svg"
+            width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        <a href="/projects/<%= project.id %>" class="tree-menu-link">
+            <%= project.title %>
+        </a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg> Thành viên
+    </h3>
+    <div class="container row g-2">
+
+        <div class="mb-3">
+            <div class="d-flex justify-content-between mb-2">
+                <h3>
+                    Quản lý thành viên
+                </h3>
+
+            </div>
+        </div>
+        <div class="list-group px-3">
+            <% for(let one of members) { %>
+                <div class="list-group-item d-flex ">
+                    <div>
+                        <img src="/uploads/avatars/<%= one.getavatar().fileName %>" alt="user-image" width="50" height="50"
+                            class="rounded-circle">
+                    </div>
+                    <div class="flex-grow-1">
+                        <a href="/users/<%= one.id %>" class="avt-link">
+                            <%= one.name %>
+                        </a>
+                        <%= one.ProjectMember.isLeader? '(Quản lý)' :'(Thành viên)' %>
+                    </div>
+                    <div>
+                        <div class="dropdown">
+                            <a class="btn btn-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item menuOptionEdit"
+                                        title="<%= one.name %>-<%= one.id %>-<%= one.ProjectMember.isLeader %>-<%= one.getavatar().fileName %>"
+                                        data-bs-toggle="modal" data-bs-target="#editModal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path
+                                                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                            <path fill-rule="evenodd"
+                                                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                        </svg>
+                                        Quản lý quyền truy cập
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger menuOptionDelete"
+                                        title="<%= one.name %>-<%= one.id %>" data-bs-toggle="modal"
+                                        data-bs-target="#deleteConfirm"><svg xmlns="http://www.w3.org/2000/svg"
+                                            width="16" height="16" fill="currentColor" class="bi bi-person-dash"
+                                            viewBox="0 0 16 16">
+
+                                            <path
+                                                d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                                            <path
+                                                d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+                                        </svg> Xóa khỏi dự án</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+        <div class="mt-5">
+            <a class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#memberModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-person-plus" viewBox="0 0 16 16">
+                    <path
+                        d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
+                    <path fill-rule="evenodd"
+                        d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+                </svg>
+                Thêm thành viên
+            </a>
+            <div class="card" id="newMembers" hidden>
+                <div class="card-body">
+                    <form action="/projects/<%= project.id %>/addmember" method="POST" id="members">
+                        <button class="btn btn-success card-btn" id="addMemberBtn">Thêm </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <script>
+            $('.menuOptionDelete').on('click', function (e) {
+
+                const target = document.querySelector(this.dataset.bsTarget);
+                const data = this.title.split('-')
+                const newInput = document.createElement('input');
+                newInput.value = data[1];
+                newInput.hidden = true;
+                newInput.name = 'user';
+                const delForm = target.querySelector('#innerModalDelete');
+                delForm.appendChild(newInput);
+                $(document.body).append(delForm);
+                const text = document.createElement('p');
+                text.innerText = `${data[0]} sẽ bị xóa khỏi danh sách thành viên. Tiếp tục?`;
+                target.querySelector('.modal-body').appendChild(text);
+                target.querySelector('.confirm-btn').onclick = function () {
+                    delForm.submit();
+                }
+            })
+            $('.menuOptionEdit').on('click', function (e) {
+                ;
+                const target = document.querySelector('#memberModal');
+                const inner = document.getElementById('innerModalEdit');
+                inner.innerHTML = '';
+                const data = this.title.split('-');
+                const newDiv = document.createElement('div');
+                newDiv.innerHTML = `<a class="avt-link">
+<span>
+<img src="/uploads/avatars/${data[3]}" alt="user-image"
+width="32"
+height="32"
+class="rounded-circle">
+</span>
+${data[0]}
+<input
+  type="text"
+  name="user"
+  value="${data[1]}"
+  hidden
+  />
+  <select class="form-select form-select-sm mx-5" name="isLeader" aria-label=".form-select-sm example">
+  <option value="true" ${data[2] == 'true' ? 'selected' : ''}>Quản lý</option>
+  <option value="false" ${data[2] == 'true' ? '' : 'selected'}>Thành viên</option>
+</select>
+</a>`;
+                inner.appendChild(newDiv);
+            })
+
+        </script>

@@ -1,0 +1,145 @@
+<% layout('layouts/boilerplate')%>
+    <h3 class="mt-5 mb-3">
+        <a href="/manage/projects" class="tree-menu-link">Quản lý</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        <a class="tree-menu-link" href="/projects/<%= project.id %>">
+            <%= project.title %>
+        </a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        Nhiệm vụ mới
+    </h3>
+
+    <form class="mt-5 needs-validation" action="/projects/<%= project.id %>/tasks" method="POST"
+        enctype="multipart/form-data" novalidate>
+        <div class="row">
+
+
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label for="projectname" class="form-label">Tiêu đề</label>
+                    <input type="text" id="projectname" class="form-control" placeholder="Enter task name" name="title"
+                        required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="project-overview" class="form-label">Nội dung</label>
+                    <textarea class="form-control" id="project-overview" rows="5"
+                        placeholder="Enter some brief about project.." name="description" required></textarea>
+                </div>
+
+                <!-- Date View -->
+                <div class="mb-3 position-relative row" id="datepicker1">
+                    <div class="mb-3 position-relative col-6">
+                        <label for="created" class="form-label">Bắt đầu</label>
+                        <input type="datetime-local" class="form-control" id="created" name="start"
+                            value="<%= created %>" required />
+                    </div>
+
+                    <div class="mb-3 position-relative col-6" id="datepicker2">
+                        <label for="deadline" class="form-label">Deadline</label>
+                        <input type="datetime-local" id="deadline" class="form-control" name="deadline" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Upload file đính kèm</label>
+                        <input type="file" class="form-control" name="uploadedFiles" multiple>
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Thêm file online </label>
+                        <div id="fileGroups">
+                        </div>
+
+                        <a type="button" class="btn btn-primary" id="addGroup">+</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <label for="leaders" class="">Phụ trách</label>
+                    </div>
+                    <div id="listgroup" class='overflow-auto'
+                        style="height: <%= project.Users.length > 5? '250px':'auto' %>">
+                        <% project.Users.forEach(user=> { %>
+                            <label class="list-group-item list-group-item-action">
+                                <input class="form-check-input me-1" type="radio" value="<%= user.id %>" name="user"
+                                    aria-label="..." required>
+                                <a>
+
+                                    <img src="/uploads/avatars/<%= user.getavatar().fileName %>" class="rounded-circle"
+                                        width="32" size="32" alt="">
+                                    <%= user.name %>
+                                </a>
+                            </label>
+
+                            <% }) %>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <button class="btn btn-primary" type="submit">Tạo</button>
+                </div>
+            </div>
+    </form>
+    <script>
+        let groupCounter = 1;  // Start from 1 since we already have group 0
+
+        document.getElementById('addGroup').addEventListener('click', function () {
+            const template = `
+                <div class="file-group mb-3">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <input type="text" name="onlinefiles[${groupCounter}][name]" class="form-control" placeholder="File name" required>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="url" name="onlinefiles[${groupCounter}][url]" class="form-control" placeholder="File URL" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger remove-group">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('fileGroups').insertAdjacentHTML('beforeend', template);
+            groupCounter++;
+        });
+
+        document.getElementById('fileGroups').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-group')) {
+                e.target.closest('.file-group').remove();
+            }
+        });
+
+        document.getElementById('fileForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {};
+
+            for (let [key, value] of formData.entries()) {
+                // Convert array-like names to nested object structure
+                let parts = key.match(/\w+/g);  // splits "files[0][name]" into ["files", "0", "name"]
+                let current = data;
+
+                for (let i = 0; i < parts.length - 1; i++) {
+                    let part = parts[i];
+                    current[part] = current[part] || (isNaN(parts[i + 1]) ? {} : []);
+                    current = current[part];
+                }
+
+                current[parts[parts.length - 1]] = value;
+            }
+
+            console.log('Form Data:', data);
+        });
+    </script>
+
+    <script src="/custom/javascripts/formvalidation.js"></script>

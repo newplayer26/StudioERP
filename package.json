@@ -1,0 +1,47 @@
+{
+  "devDependencies": {
+    "passport-local-sequelize": "^0.9.1",
+    "sequelize-cli": "^6.6.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "bootstrap-icons": "^1.10.3",
+    "connect": "^3.7.0",
+    "connect-flash": "^0.1.1",
+    "connect-session-sequelize": "^7.1.5",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "ejs-mate": "^4.0.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-sse": "^0.5.3",
+    "formidable": "^2.1.1",
+    "fs": "^0.0.1-security",
+    "joi": "^17.8.3",
+    "joi-oid": "^1.1.2",
+    "jsonwebtoken": "^9.0.0",
+    "method-override": "^3.0.0",
+    "mime": "^3.0.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.1.2",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "process": "^0.11.10",
+    "router": "^2.0.0",
+    "sequelize": "^6.29.0"
+  },
+  "name": "quanlyappsql",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "pbui",
+  "license": "ISC",
+  "description": ""
+}

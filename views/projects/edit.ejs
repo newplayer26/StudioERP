@@ -1,0 +1,51 @@
+<% layout('layouts/boilerplate')%>
+  <h3 class="mt-5 mb-3">
+    <a href="/manage/projects" class="tree-menu-link">Quản lý</a> <svg xmlns="http://www.w3.org/2000/svg" width="16"
+      height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+      <path
+        d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+    </svg>
+    <a href="/projects/<%= project.id %>" class="tree-menu-link">
+      <%= project.title %>
+    </a>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill"
+      viewBox="0 0 16 16">
+      <path
+        d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+    </svg> Chỉnh sửa
+  </h3>
+  <form class="row mt-5" action="/projects/<%= project.id %>?_method=PUT" method="POST">
+    <div class="col-xl-8">
+      <div class="mb-3">
+        <label for="projectname" class="form-label">Tiêu đề</label>
+        <input type="text" id="projectname" class="form-control" placeholder="Enter project name" name="title"
+          value="<%= project.title %>" />
+      </div>
+
+      <div class="mb-3">
+        <label for="project-overview" class="form-label">Nội dung</label>
+        <textarea class="form-control" id="project-overview" rows="5" placeholder="Enter some brief about project.."
+          name="description"><%= project.description %></textarea>
+      </div>
+
+      <!-- Date View -->
+      <div class="mb-3 position-relative row" id="datepicker1">
+        <div class="mb-3 position-relative col-6">
+          <label for="created" class="form-label">Bắt đầu</label>
+          <input type="datetime-local" class="form-control" id="created" name="created"
+            value="<%= createdAt %>" disabled />
+        </div>
+        <div class="mb-3 position-relative col-6" id="datepicker2">
+          <label for="deadline" class="form-label">Deadline</label>
+          <input type="datetime-local" id="deadline" class="form-control" name="deadline"
+            value="<%= deadline %>" />
+        </div>
+      </div>
+    </div>
+
+    <div class=" row">
+      <div class="col-3">
+        <button class="btn btn-primary">Chỉnh sửa</button>
+      </div>
+    </div>
+  </form>

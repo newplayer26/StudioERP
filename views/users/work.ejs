@@ -1,0 +1,248 @@
+<%- layout('layouts/boilerplate') %>
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Thông tin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                                    <form action="/users/<%= user.id %>/info" method="post" id="editinfoform"
+                        enctype="multipart/form-data">
+                        <div class="row my-3">
+                            <div class="col-4">
+                                <label for="">CMND/CCCD:</label>
+                            </div>
+                            <div class="col-8 d-flex ">
+                                <input class="form-control" type="text" value="<%= user.document %>" name="document">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="job" class="form-label">Quyền được cấp</label>
+                            <div class="form-row">
+                                <div class="form-check form-check-inline col-6">
+                                    <input class="form-check-input" type="checkbox" name="isHr" <%=user.isHr? "checked"
+                                        :"" %>/>
+                                    <label class="form-check-label" for="ft">Quản lý nhân sự</label>
+                                </div>
+                                <div class="form-check form-check-inline col-6">
+                                    <input class="form-check-input" type="checkbox" name="financeManagement"
+                                        <%=user.financeManagement? "checked" :"" %>/>
+                                    <label class="form-check-label" for="ft">Quản lý tài chính</label>
+                                </div>
+                                <div class="form-check form-check-inline col-6">
+                                    <input class="form-check-input" type="checkbox" name="workScheduleManagement"
+                                        <%=user.workScheduleManagement? "checked" :"" %>/>
+                                    <label class="form-check-label" for="ft">Quản lý dự án</label>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </form>
+
+                    <script>
+                        async function search(event) {
+                            event.preventDefault();
+                            const resHolder = document.getElementById("results");
+                            resHolder.innerHTML = "";
+                            const query = document.getElementById("searchInput").value;
+
+                            let url = `<%= process.env.DOMAIN_NAME %>/search/users?search=${query}&level=3`;
+                            const response = await fetch(url, {
+                                method: "POST",
+                                body: JSON.stringify({ query: query }),
+                            });
+                            const data = await response.json();
+
+                            const members = document.getElementById("members");
+                            for (let one of data) {
+                                const newDiv = document.createElement("div");
+                                const user = document.createElement("a");
+                                user.classList.add('list-group-item', "list-group-item-action")
+                                user.innerHTML = `<div class="d-flex">
+                        <div class="flex-grow-1">
+                            <span>
+                                <img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image" width="32"
+                                    height="32" class="rounded-circle">
+                            </span>
+                            ${one.name}
+                        </div>
+                        <div>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                        </div>
+                    </div>
+                `;
+                                user.addEventListener("click", function () {
+                                    this.querySelector('.form-check-input').checked = true;
+                                    members.innerHTML = '';
+                                    const memberDiv = document.createElement("div");
+                                    memberDiv.classList.add('alert', 'alert-light', 'alert-dismissible', 'fade', 'show')
+                                    memberDiv.innerHTML = `
+                          <a class="avt-link">
+  
+                    <span>
+                  <img src="/uploads/avatars/${one.avatar.fileName}" alt="user-image"
+                  width="32"
+                  height="32"
+                  class="rounded-circle">
+                </span>
+                ${one.name}
+                    <input
+                      type="text"
+                      name="superior"
+                      value="${one.id}"
+                      hidden
+                    />
+                  </a>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                                    members.appendChild(memberDiv);
+                                });
+                                newDiv.appendChild(user);
+                                resHolder.appendChild(newDiv);
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-header d-flex">
+            <h3 class="me-auto">Thông tin nhân viên</h3>
+
+            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#infoModal"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path
+                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path fill-rule="evenodd"
+                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                </svg></a>
+
+        </div>
+        <div class="card-body">
+            <div>
+
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">CMND/CCCD:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <p>
+                                <%= user.document %>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">Email:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <p>
+                                <%= user.email %>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">Số điện thoại:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <p>
+                                <%= user.phone %>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">Hợp đồng lao động:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <% if(user.contract){ %>
+                                <a href="/uploads/contracts/<%= user.contract.fileName %>" target="_blank">
+                                    <%= user.contract.fileDisplay %>
+                                </a>
+                                <% } else { %>
+                                    <p>
+                                        Chưa có
+                                    </p>
+                                    <% } %>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">Cấp trên phụ trách:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <% if(user.superior) {%>
+                                <a href="/users/<%= user.superior.id %>" class="avt-link"><img
+                                        src="/uploads/avatars/<%= user.superior.getavatar().fileName %>" alt=""
+                                        width="40" height="40" class="rounded-circle">
+                                    <%= user.superior.name %>
+                                </a>
+                                <% } else {%>
+                                    <p>Chưa có</p>
+                                    <% } %>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">Loại hợp đồng:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <p>
+                                <%= user.isFulltime? 'Full time' :'Part time' %>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">Quyền quản lý nhân sự:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <p>
+                                <%= user.isHr? 'Có' :'Không' %>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="">Chức vụ:</label>
+                    </div>
+                    <div class="col-8 d-flex ">
+                        <div class="me-auto">
+                            <p>
+                                <%= user.title %>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
