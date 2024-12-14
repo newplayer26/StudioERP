@@ -259,7 +259,7 @@
                                 <form action="/tasks/<%= task.id %>/assess" method="post" enctype="multipart/form-data">
                                     <div class="mb-3">
                                         <label for="comment" class="col-form-label">Đánh giá</label>
-                                        <textarea class="form-control" id="comment" name="assessment"></textarea>
+                                        <textarea class="form-control" id="comment" name="content"></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <output>Tiến độ: <%= task.progress %>%</output>
@@ -295,7 +295,7 @@
                                         enctype="multipart/form-data">
                                         <div class="mb-3">
                                             <label for="comment" class="col-form-label">Báo cáo</label>
-                                            <textarea class="form-control" id="comment" name="assessment"></textarea>
+                                            <textarea class="form-control" id="comment" name="content"></textarea>
                                         </div>
                                         <div class="mb-3">
                                             <label for="formFileMultiple" class="form-label">File đính kèm:</label>

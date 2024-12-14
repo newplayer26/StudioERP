@@ -32,8 +32,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.VIRTUAL,
         get() {
           return (
-            parseInt(this.getDataValue("calculatedRevenue") || 0) /
-            this.getDataValue("projectedRevenue")
+            (parseInt(this.getDataValue("calculatedRevenue") || 0) /
+              this.getDataValue("projectedRevenue")) *
+            100
           );
         },
       },

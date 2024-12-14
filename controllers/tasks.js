@@ -43,19 +43,16 @@ module.exports.renderTask = wrapAsync(async (req, res) => {
     ],
   });
   let isManager = false;
-  if (req.user.isProjectManager) {
+  const instance = await ProjectMember.findOne({
+    where: {
+      projectId: task.projectId,
+      userId: req.user.id,
+      isLeader: true,
+    },
+  });
+  console.log(instance);
+  if (instance) {
     isManager = true;
-  } else {
-    const instance = await ProjectMember.findOne({
-      where: {
-        projectId: task.projectId,
-        userId: task.userId,
-        isLeader: true,
-      },
-    });
-    if (instance) {
-      isManager = true;
-    }
   }
   res.render("tasks/task", {
     task,

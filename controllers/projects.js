@@ -332,12 +332,13 @@ module.exports.editProject = wrapAsync(async (req, res) => {
     typeof project.fileIds === "object"
       ? project.fileIds
       : JSON.parse(project.fileIds);
-  const { title, description, start, deadline } = body;
+  const { title, description, start, deadline, projectedRevenue } = body;
   project.fileIds = project.fileIds.concat(fileIds);
   project.title = title;
   project.description = description;
   project.start = start;
   project.deadline = deadline;
+  project.projectedRevenue = projectedRevenue;
   await project.save();
   res.redirect(`/projects/${id}`);
 });
