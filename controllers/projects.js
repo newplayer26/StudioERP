@@ -80,26 +80,18 @@ module.exports.isOwnProject = wrapAsync(async (req, res, next) => {
 
 module.exports.checkCredentials2 = wrapAsync(async (req, res, next) => {
   const { id } = req.params;
-  const project = await Project.findByPk(id, {
-    include: [
-      {
-        model: User,
-        as: "Members",
-
-        through: {
-          model: ProjectMember,
-          where: {
-            isLeader: true,
-          },
-        },
-        where: {
-          id: req.user.id,
-        },
-        required: false,
-      },
-    ],
+  if (req.user.isProjectManager) {
+    res.locals.isLeader = true;
+    return next();
+  }
+  const projectMember = await projectMember.findOne({
+    where: {
+      userId: req.user.id,
+      projectId: id,
+      isLeader: true,
+    },
   });
-  if (project.Members.length || req.user.isProjectManager) {
+  if (projectMember) {
     res.locals.isLeader = true;
     return next();
   } else {
@@ -251,7 +243,6 @@ module.exports.postTask = wrapAsync(async (req, res) => {
     req.flash("error", "Nhiệm vụ cần có người phụ trách");
     return res.redirect(`/projects/${id}/tasks/new`);
   }
-  console.log(body);
   body.projectId = id;
   body.userId = body.user;
   body.creatorId = req.user.id;
@@ -264,8 +255,8 @@ module.exports.postTask = wrapAsync(async (req, res) => {
         isLocal: false,
         fileUrl: file.url,
       });
+      fileIds.push(createFile.id);
     }
-    fileIds.push(createFile.id);
   }
   for (let file of req.files) {
     const createFile = await File.create({
@@ -314,11 +305,40 @@ module.exports.renderEdit = wrapAsync(async (req, res) => {
 module.exports.editProject = wrapAsync(async (req, res) => {
   const { id } = req.params;
   const body = req.body;
-  const project = await Project.update(body, {
-    where: {
-      id,
-    },
-  });
+  const fileIds = [];
+  const project = await Project.findByPk(id);
+  console.log(req);
+  if (body.onlinefiles) {
+    for (let file of body.onlinefiles) {
+      if (!file) continue;
+      const createFile = await File.create({
+        fileDisplay: file.name,
+        isLocal: false,
+        fileUrl: file.url,
+      });
+      fileIds.push(createFile.id);
+    }
+  }
+  for (let file of req.files) {
+    const createFile = await File.create({
+      fileDir: "projects",
+      fileDisplay: file.originalname,
+      fileName: file.filename,
+      isLocal: true,
+    });
+    fileIds.push(createFile.id);
+  }
+  project.fileIds =
+    typeof project.fileIds === "object"
+      ? project.fileIds
+      : JSON.parse(project.fileIds);
+  const { title, description, start, deadline } = body;
+  project.fileIds = project.fileIds.concat(fileIds);
+  project.title = title;
+  project.description = description;
+  project.start = start;
+  project.deadline = deadline;
+  await project.save();
   res.redirect(`/projects/${id}`);
 });
 
@@ -350,21 +370,6 @@ module.exports.addFiles = wrapAsync(async (req, res, next) => {
   res.redirect(`/projects/${id}`);
 });
 
-module.exports.deleteFile = wrapAsync(async (req, res, next) => {
-  const { fileid, id } = req.params;
-  File.findOne({
-    where: {
-      id: fileid,
-      ProjectId: id,
-    },
-  })
-    .then((file) => file.destroy())
-    .catch((e) => {
-      console.log(e);
-      next(e);
-    });
-});
-
 module.exports.newTaskForm = wrapAsync(async (req, res) => {
   const { id } = req.params;
   const project = await Project.findByPk(id, {
@@ -387,53 +392,53 @@ module.exports.renderMembersPage = wrapAsync(async (req, res) => {
     include: [
       {
         model: User,
-        as: "Members",
         order: [["accessLevel", "ASC"]],
         include: {
-          model: File,
-          as: "avatar",
+          model: Avatar,
         },
       },
     ],
   });
-  const { Members } = project;
+  const { Users } = project;
 
-  res.render("projects/members", { members: Members, project });
+  res.render("projects/members", { members: Users, project });
 });
 
 module.exports.deleteMember = wrapAsync(async (req, res) => {
   const { id } = req.params;
   const { user } = req.body;
-  const project = await Project.findByPk(id);
-  await project.removeMembers(user);
+  console.log(id, user);
+  const projectMember = await ProjectMember.findOne({
+    where: {
+      projectId: id,
+      userId: user,
+    },
+  });
+  await projectMember.destroy();
   res.redirect(`/projects/${id}/members`);
 });
 
 module.exports.addMembers = wrapAsync(async (req, res) => {
   const { id } = req.params;
   const { members } = req.body;
+  console.log(members);
   const project = await Project.findByPk(id, {
     include: [
       {
         model: User,
-        as: "Members",
       },
     ],
   });
   for (let el of Object.entries(members)) {
-    const found = project.Members.find(
-      (element) =>
-        element.id == (Array.isArray(el[1].id) ? el[1].id[0] : el[1].id)
-    );
-    if (found) continue;
+    console.log(el);
     const mem = Array.isArray(el[1].id) ? el[1].id[0] : el[1].id;
     const right = Array.isArray(el[1].isLeader)
       ? el[1].isLeader[0]
       : el[1].isLeader;
-    await project.addMember(mem, {
-      through: {
-        isLeader: right,
-      },
+    await ProjectMember.upsert({
+      projectId: id,
+      userId: mem,
+      isLeader: right,
     });
   }
   res.redirect(`/projects/${id}`);
@@ -453,4 +458,24 @@ module.exports.editMemberRights = wrapAsync(async (req, res) => {
     }
   );
   res.redirect(`/projects/${id}/members`);
+});
+
+module.exports.deleteFile = wrapAsync(async (req, res, next) => {
+  const { fileid, id } = req.params;
+  const { isLeader } = res.locals;
+  if (isLeader) {
+    File.findOne({
+      where: {
+        id: fileid,
+      },
+    })
+      .then((file) => {
+        console.log(file);
+        file.destroy();
+      })
+      .catch((e) => {
+        console.log(e);
+        next(e);
+      });
+  }
 });

@@ -7,6 +7,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../config/config.json")[env];
 const crypto = require("crypto");
 const db = {};
+const { Op } = require("sequelize");
 
 let sequelize;
 if (config.use_env_variable) {
@@ -100,12 +101,15 @@ File.beforeDestroy(async (file, options) => {
   if (!file.isLocal) {
     return;
   }
-  fs.unlink(file.filePath, (err) => {
-    if (err) {
-      console.error(err);
-      return;
+  fs.unlink(
+    `${__dirname__}/../uploads/${file.fileDir}/${file.fileName}`,
+    (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
     }
-  });
+  );
 });
 
 Task.beforeDestroy(async (task, options) => {

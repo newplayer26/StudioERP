@@ -31,7 +31,7 @@ router
   .route("/:id")
   .get(renderProject)
   .delete(checkCredentials, deleteProject)
-  .put(checkCredentials2, editProject);
+  .patch(checkCredentials2, uploads("projects").array("files"), editProject);
 router.get("/:id/tasks/new", isOwnProject, newTaskForm);
 router.post(
   "/:id/tasks",
@@ -53,5 +53,7 @@ router.post(
   uploads("projects").array("files"),
   addFiles
 );
+
+router.delete("/:id/filedelete/:fileid", checkCredentials2, deleteFile);
 
 module.exports = router;

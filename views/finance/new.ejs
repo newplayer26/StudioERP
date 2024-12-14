@@ -1,144 +1,196 @@
 <% layout('layouts/boilerplate')%>
 
-  <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Tìm dự án</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tìm dự án</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-        <div class="modal-body">
-          <form onsubmit="search(event)" class="d-flex">
+                <div class="modal-body">
+                    <form onsubmit="search(event)" class="d-flex">
 
-            <input type="text" id="searchInput" class="form-control " placeholder="Search..." />
+                        <input type="text" id="searchInput" class="form-control " placeholder="Search..." />
 
-            <button type="submit" id="queryBtn2" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                        <button type="submit" id="queryBtn2" class="btn btn-primary"><i
+                                class="fa fa-search"></i></button>
 
-          </form>
-          <div class="card">
-            <div class="card-body list" id="results">
-              <div id="results" class="list-group">
+                    </form>
+                    <div class="card">
+                        <div class="card-body list" id="results">
+                            <div id="results" class="list-group">
 
-              </div>
-            </div>
-          </div>
-          <script>
-            async function search(event) {
-              event.preventDefault();
-              const resHolder = document.getElementById("results");
-              resHolder.innerHTML = "";
-              const query = document.getElementById("searchInput").value;
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        async function search(event) {
+                            event.preventDefault();
+                            const resHolder = document.getElementById("results");
+                            resHolder.innerHTML = "";
+                            const query = document.getElementById("searchInput").value;
 
-              let url = `<%= process.env.DOMAIN_NAME %>/search/projects?search=${query}`;
-              const response = await fetch(url, {
-                method: 'get'
-              });
-              const data = await response.json();
+                            let url = `<%= process.env.DOMAIN_NAME %>/search/projects?search=${query}`;
+                            const response = await fetch(url, {
+                                method: 'get'
+                            });
+                            const data = await response.json();
 
-              const projects = document.getElementById("projects");
-              for (let one of data) {
-                const newDiv = document.createElement("div");
-                const project = document.createElement("a");
-                project.classList.add('list-group-item', "list-group-item-action")
-                project.innerHTML = one.title.length > 30? `${one.title.substring(0,30)}...`:one.title;
-                project.addEventListener("click", () => {
-                  projects.innerHTML = '';
-                  const memberDiv = document.createElement("div");
-                  memberDiv.classList.add('alert', 'alert-light', 'alert-dismissible', 'fade', 'show')
-                  memberDiv.innerHTML = `
+                            const projects = document.getElementById("projects");
+                            for (let one of data) {
+                                const newDiv = document.createElement("div");
+                                const project = document.createElement("a");
+                                project.classList.add('list-group-item', "list-group-item-action")
+                                project.innerHTML = one.title.length > 30 ? `${one.title.substring(0, 30)}...` : one.title;
+                                project.addEventListener("click", () => {
+                                    projects.innerHTML = '';
+                                    const memberDiv = document.createElement("div");
+                                    memberDiv.classList.add('alert', 'alert-light', 'alert-dismissible', 'fade', 'show')
+                                    memberDiv.innerHTML = `
                         <a class="avt-link" href="/projects/${one.id}">
                   ${one.title}
                 </a>
-                <input value="${one.id}" name="ProjectId" hidden>
+                <input value="${one.id}" name="projectId" hidden>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-                  projects.appendChild(memberDiv);
-                });
-                newDiv.appendChild(project);
-                resHolder.appendChild(newDiv);
-              }
-            }
-          </script>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <h3 class="mt-5 mb-3">
-    <a href="/manage/finance" class="tree-menu-link">Tài chính</a>
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill"
-      viewBox="0 0 16 16">
-      <path
-        d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
-    </svg>
-    Tạo báo cáo
-  </h3>
-  <div class="row">
-    <form class="mt-5 col-xl-7" action="/manage/finance/new" id="financeform" method="POST" enctype="multipart/form-data">
-      <div class="">
-        <div class="mb-3">
-          <div class="d-flex justify-content-between mb-2">
-            <label for="members" class="">Dự án</label>
-            <div>
-              <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#projectModal">
-                <i class='bx bx-search'></i>
-              </a>
+                                    projects.appendChild(memberDiv);
+                                });
+                                newDiv.appendChild(project);
+                                resHolder.appendChild(newDiv);
+                            }
+                        }
+                    </script>
+                </div>
             </div>
-          </div>
-          <div id="projects"></div>
         </div>
-        <div class="mb-3">
-          <label for="" class="form-label">Mô tả</label>
-          <input type="text" id="" class="form-control" placeholder="" name="title" />
-        </div>
+    </div>
 
-        <div class="mb-3">
-          <label for="" class="form-label">Thời gian</label>
-          <input type="date" id="" class="form-control" placeholder="" name="date" />
-        </div>
+    <h3 class="mt-5 mb-3">
+        <a href="/manage/finance" class="tree-menu-link">Tài chính</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        Tạo báo cáo
+    </h3>
+    <div class="row">
+        <form class="mt-5 col-xl-7" action="/manage/finance/new" id="financeform" method="POST"
+            enctype="multipart/form-data" novalidate>
+            <div class="">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <label for="members" class="">Dự án</label>
+                        <div>
+                            <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                <i class='bx bx-search'></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div id="projects"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Mô tả</label>
+                    <input type="text" id="" class="form-control" placeholder="" name="title" required />
+                </div>
 
-        <div class="mb-3">
-          <label for="project-overview" class="form-label">Ghi chú</label>
-          <textarea class="form-control" id="" rows="5" placeholder="" name="note"></textarea>
-        </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Thời gian</label>
+                    <input type="date" id="" class="form-control" placeholder="" name="date" required />
+                </div>
 
-        <div class="mb-3 row">
-          <div class="col">
-            <label for="project-overview" class="form-label">Loại</label>
-            <select name="isExpense" id="" class="form-select">
-              <option value="false" selected>Doanh thu</option>
-              <option value="true">Chi phí</option>
-              <option value="advanced">Chi phí ứng</option>
-            </select>
-          </div>
-          
-        </div>
-        <div class="mb-3">
-          <label for="" class="form-label">Số tiền(VND)</label>
-          <input type="text" id="" class="form-control" placeholder="" name="amount" />
-        </div>
-        <div class="mb-3">
-          <label for="" class="form-label">File đính kèm</label>
-          <input type="file" id="" class="form-control" placeholder="" name="files" multiple/>
-        </div>
+                <div class="mb-3">
+                    <label for="project-overview" class="form-label">Ghi chú</label>
+                    <textarea class="form-control" id="" rows="5" placeholder="" name="note"></textarea>
+                </div>
 
-        <!-- Date View -->
-      </div>
+                <div class="mb-3 row">
+                    <div class="col">
+                        <label for="project-overview" class="form-label">Loại</label>
+                        <select name="isExpense" id="" class="form-select" required>
+                            <option value="false" selected>Doanh thu</option>
+                            <option value="true">Chi phí</option>
+                        </select>
+                    </div>
 
-      <div class="row">
-        <div class="col-3">
-          <button class="btn btn-primary" id="financesubmit" type="submit">Tạo</button>
-        </div>
-      </div>
-    </form>
-  </div>
-  <script>
-    $('#financesubmit').on("click", function(e){
-      e.preventDefault();
-      const form =document.querySelector('#financeform');
-      const formData = new FormData(form);
-      const id = formData.get('ProjectId');
-      form.action = `/manage/finance/new?projectId=${id}`;
-      form.submit();
-    } )
-  </script>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Số tiền(VND)</label>
+                    <input type="text" id="" class="form-control" placeholder="" name="amount" required />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Upload file đính kèm</label>
+                    <input type="file" id="" class="form-control" placeholder="" name="files" multiple />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Thêm file online </label>
+                    <div id="fileGroups">
+                    </div>
+
+                    <a type="button" class="btn btn-primary" id="addGroup">+</a>
+                </div>
+                <!-- Date View -->
+            </div>
+
+            <div class="row">
+                <div class="col-3">
+                    <button class="btn btn-primary" id="financesubmit" type="submit">Tạo</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        let groupCounter = 1;  // Start from 1 since we already have group 0
+
+        document.getElementById('addGroup').addEventListener('click', function () {
+            const template = `
+                <div class="file-group mb-3">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <input type="text" name="onlinefiles[${groupCounter}][name]" class="form-control" placeholder="File name" required>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="url" name="onlinefiles[${groupCounter}][url]" class="form-control" placeholder="File URL" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger remove-group">x</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('fileGroups').insertAdjacentHTML('beforeend', template);
+            groupCounter++;
+        });
+
+        document.getElementById('fileGroups').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-group')) {
+                e.target.closest('.file-group').remove();
+            }
+        });
+
+        document.getElementById('fileForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {};
+
+            for (let [key, value] of formData.entries()) {
+                // Convert array-like names to nested object structure
+                let parts = key.match(/\w+/g);  // splits "files[0][name]" into ["files", "0", "name"]
+                let current = data;
+
+                for (let i = 0; i < parts.length - 1; i++) {
+                    let part = parts[i];
+                    current[part] = current[part] || (isNaN(parts[i + 1]) ? {} : []);
+                    current = current[part];
+                }
+
+                current[parts[parts.length - 1]] = value;
+            }
+
+            console.log('Form Data:', data);
+        });
+    </script>
+
+
+    <script src="/custom/javascripts/formvalidation.js"></script>

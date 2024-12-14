@@ -97,47 +97,62 @@
                                 </p>
                             </div>
                         </div>
-
-                        <div class="row mb-2">
-                            <div class="col-md-4">
-                                <label for="start" class="h5">Phụ trách:</label>
-                                <div class="row">
-                                    <% for(let one of leaders) {%>
-                                        <div class="col-4 col-lg-6">
-                                            <a href="/users/<%= one.id%>" class="avt-link">
-                                                <span>
-                                                    <img src="/uploads/avatars/<%= one.getavatar().fileName %>"
-                                                        alt="user-image" width="32" class="rounded-circle">
-                                                </span>
-                                                <%= one.name %>
+                        <% if(project.Files && project.Files.length) {%>
+                            <div class="row ">
+                                <p>File đính kèm:</p>
+                                <ul class="mx-5">
+                                    <% for(let file of project.Files){ %>
+                                        <li>
+                                            <a href="<%=file.isLocal? `/uploads/${file.fileDir}/${file.fileName}`:file.fileUrl  %>"
+                                                target="_blank">
+                                                <i class='bx bx-file'></i>
+                                                <%= file.fileDisplay %>
                                             </a>
+                                        </li>
+                                        <% } %>
+                                </ul>
+                            </div>
+                            <% } %>
+                                <div class="row mb-2">
+                                    <div class="col-md-4">
+                                        <label for="start" class="h5">Phụ trách:</label>
+                                        <div class="row">
+                                            <% for(let one of leaders) {%>
+                                                <div class="col-4 col-lg-6">
+                                                    <a href="/users/<%= one.id%>" class="avt-link">
+                                                        <span>
+                                                            <img src="/uploads/avatars/<%= one.getavatar().fileName %>"
+                                                                alt="user-image" width="32" class="rounded-circle">
+                                                        </span>
+                                                        <%= one.name %>
+                                                    </a>
+                                                </div>
+
+                                                <% } %>
                                         </div>
 
-                                        <% } %>
-                                </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="end" class="h5">Thành viên:</label>
+                                        <div class="row">
+                                            <% for(let one of members) {%>
+                                                <div class="col-4 col-lg-6">
+                                                    <a href="/users/<%= one.id%>" class="avt-link">
+                                                        <span>
+                                                            <img src="/uploads/avatars/<%=  one.getavatar().fileName %>"
+                                                                alt="user-image" width="32" class="rounded-circle">
+                                                        </span>
+                                                        <%= one.name %>
+                                                    </a>
+                                                </div>
+                                                <% } %>
 
-                            </div>
-                            <div class="col-md-4">
-                                <label for="end" class="h5">Thành viên:</label>
-                                <div class="row">
-                                    <% for(let one of members) {%>
-                                        <div class="col-4 col-lg-6">
-                                            <a href="/users/<%= one.id%>" class="avt-link">
-                                                <span>
-                                                    <img src="/uploads/avatars/<%=  one.getavatar().fileName %>"
-                                                        alt="user-image" width="32" class="rounded-circle">
-                                                </span>
-                                                <%= one.name %>
-                                            </a>
+
                                         </div>
-                                        <% } %>
 
 
+                                    </div>
                                 </div>
-
-
-                            </div>
-                        </div>
                     </div>
 
                 </div>

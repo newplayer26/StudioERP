@@ -1,238 +1,298 @@
 <% layout('layouts/boilerplate')%>
 
-  <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Tìm dự án</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tìm dự án</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-        <div class="modal-body">
-          <form onsubmit="search(event)" class="d-flex">
+                <div class="modal-body">
+                    <form onsubmit="search(event)" class="d-flex">
 
-            <input type="text" id="searchInput" class="form-control " placeholder="Search..." />
+                        <input type="text" id="searchInput" class="form-control " placeholder="Search..." />
 
-            <button type="submit" id="queryBtn2" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                        <button type="submit" id="queryBtn2" class="btn btn-primary"><i
+                                class="fa fa-search"></i></button>
 
-          </form>
-          <div class="card">
-            <div class="card-body list" id="results">
-              <div id="results" class="list-group">
+                    </form>
+                    <div class="card">
+                        <div class="card-body list" id="results">
+                            <div id="results" class="list-group">
 
-              </div>
-            </div>
-          </div>
-          <script>
-            async function search(event) {
-              event.preventDefault();
-              const resHolder = document.getElementById("results");
-              resHolder.innerHTML = "";
-              const query = document.getElementById("searchInput").value;
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        async function search(event) {
+                            event.preventDefault();
+                            const resHolder = document.getElementById("results");
+                            resHolder.innerHTML = "";
+                            const query = document.getElementById("searchInput").value;
 
-              let url = `<%= process.env.DOMAIN_NAME %>/search/projects?search=${query}`;
-              const response = await fetch(url, {
-                method: 'get'
-              });
-              const data = await response.json();
+                            let url = `<%= process.env.DOMAIN_NAME %>/search/projects?search=${query}`;
+                            const response = await fetch(url, {
+                                method: 'get'
+                            });
+                            const data = await response.json();
 
-              const projects = document.getElementById("projects");
-              for (let one of data) {
-                const newDiv = document.createElement("div");
-                const project = document.createElement("a");
-                project.classList.add('list-group-item', "list-group-item-action")
-                project.innerHTML = one.title.length > 30 ? `${one.title.substring(0, 30)}...` : one.title;
-                project.addEventListener("click", () => {
-                  projects.innerHTML = '';
-                  const memberDiv = document.createElement("div");
-                  memberDiv.classList.add('alert', 'alert-light', 'alert-dismissible', 'fade', 'show', 'border')
-                  memberDiv.innerHTML = `
+                            const projects = document.getElementById("projects");
+                            for (let one of data) {
+                                const newDiv = document.createElement("div");
+                                const project = document.createElement("a");
+                                project.classList.add('list-group-item', "list-group-item-action")
+                                project.innerHTML = one.title.length > 30 ? `${one.title.substring(0, 30)}...` : one.title;
+                                project.addEventListener("click", () => {
+                                    projects.innerHTML = '';
+                                    const memberDiv = document.createElement("div");
+                                    memberDiv.classList.add('alert', 'alert-light', 'alert-dismissible', 'fade', 'show', 'border')
+                                    memberDiv.innerHTML = `
                         <a class="avt-link" href="/projects/${one.id}">
                   ${one.title}
                 </a>
-                <input value="${one.id}" name="ProjectId" hidden>
+                <input value="${one.id}" name="projectId" hidden>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-                  projects.appendChild(memberDiv);
-                });
-                newDiv.appendChild(project);
-                resHolder.appendChild(newDiv);
-              }
-            }
-          </script>
+                                    projects.appendChild(memberDiv);
+                                });
+                                newDiv.appendChild(project);
+                                resHolder.appendChild(newDiv);
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Xác nhận</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Xác nhận</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-        <div class="modal-body">
-          Báo cáo sẽ bị xóa, tiếp tục?
+                <div class="modal-body">
+                    Báo cáo sẽ bị xóa, tiếp tục?
+                </div>
+                <div class="modal-footer">
+                    <form action="/manage/finance/<%= finance.id %>/edit?_method=delete" method="post">
+                        <button class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="modal-footer">
-          <form action="/manage/finance/<%= finance.id %>/edit?_method=delete<%= inproject? '&inproject=true':'' %>"
-            method="post">
-            <button class="btn btn-danger">Xóa</button>
-          </form>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Xóa file</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Xóa file</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-        <div class="modal-body">
+                <div class="modal-body">
 
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" id="file-confirm" data-bs-target="#fileModal">Xác nhận</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-danger" id="file-confirm" data-bs-target="#fileModal">Xác nhận</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <h3 class="mt-5 mb-3">
-    <a href="/manage/finance" class="tree-menu-link">Tài chính</a>
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill"
-      viewBox="0 0 16 16">
-      <path
-        d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
-    </svg>
-    Chỉnh sửa
-  </h3>
+    <h3 class="mt-5 mb-3">
+        <a href="/manage/finance" class="tree-menu-link">Tài chính</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+            <path
+                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+        </svg>
+        Chỉnh sửa
+    </h3>
 
-  <form class="mt-5 row" action="/manage/finance/<%= finance.id %>/edit<%= inproject? '?inproject=true':'' %>" enctype="multipart/form-data"
-    method="POST">
-    <div class="col-xl-6">
-      <div class="">
-        <div class="mb-3">
-          <div class="d-flex justify-content-between mb-2">
-            <label for="" class="">Dự án</label>
+    <form class="mt-5 row" action="/manage/finance/<%= finance.id %>/edit" enctype="multipart/form-data" method="POST">
+        <div class="col-xl-6">
+            <div class="">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <label for="" class="">Dự án</label>
+                        <div>
+                            <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                <i class='bx bx-search'></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div id="projects">
+                        <% if(finance.Project){ %>
+                            <div class="alert alert-light border alert-dismissible fade show">
+                                <a class="avt-link" href="/projects/<%= finance.Project.id  %>">
+                                    <%= finance.Project.title %>
+                                </a>
+                                <input value="<%= finance.Project.id  %>" name="ProjectId" hidden>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Mô tả</label>
+                    <input type="text" id="" class="form-control" placeholder="" name="title"
+                        value="<%= finance.title %>" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="" class="form-label">Thời gian</label>
+                    <input type="date" id="" class="form-control" placeholder="" name="date" value="<%= date %>" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="project-overview" class="form-label">Ghi chú</label>
+                    <textarea class="form-control" id="" rows="5" placeholder=""
+                        name="note"><%= finance.note %></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="project-overview" class="form-label">Loại</label>
+                    <select name="isExpense" id="" class="form-select">
+                        <option value="false" <%=finance.isExpense? '' :'selected'%>>Doanh thu</option>
+                        <option value="true" <%=!finance.isExpense? '' :'selected'%>>Chi phí</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Số tiền(VND)</label>
+                    <input type="text" id="" class="form-control" placeholder="" name="amount"
+                        value="<%= finance.amount %>" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Upload file đính kèm</label>
+                    <input type="file" name="files" class="form-control" multiple>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Thêm file online </label>
+                    <div id="fileGroups">
+                    </div>
+
+                    <a type="button" class="btn btn-primary" id="addGroup">+</a>
+                </div>
+                <!-- Date View -->
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="mb-3 ">
+                <% if(finance.Files.length) {%>
+                    <label for="" class="form-label">Tệp đính kèm</label>
+
+
+                    <div id="files">
+                        <% finance.Files.forEach(el=> { %>
+                            <div class="alert alert-light border alert-dismissible fade show mb-0">
+                                <a class="avt-link" href="/uploads/finance/<%= el.fileName  %>" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" />
+                                        <path
+                                            d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+                                    </svg>
+                                    <%= el.fileDisplay %>
+                                </a>
+                                <button type="button" class="btn-close btn-danger btn-file-delete"
+                                    id="file-<%= el.id %>" data-bs-toggle="modal" data-bs-target="#fileModal"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" id="close-<%= el.id %>"
+                                    aria-label="Close" hidden></button>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } %>
+
+
+            </div>
+        </div>
+
+
+        <div class="d-flex ">
             <div>
-              <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#projectModal">
-                <i class='bx bx-search'></i>
-              </a>
+                <button class="btn btn-primary">Lưu thay đổi</button>
             </div>
-          </div>
-          <div id="projects">
-            <% if(finance.Project){ %>
-              <div class="alert alert-light border alert-dismissible fade show">
-                <a class="avt-link" href="/projects/<%= finance.Project.id  %>">
-                  <%= finance.Project.title %>
-                </a>
-                <input value="<%= finance.Project.id  %>" name="ProjectId" hidden>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <% } %>
-          </div>
+            <!-- <div class="mx-1">
+                <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Xóa</a>
+            </div> -->
         </div>
-        <div class="mb-3">
-          <label for="" class="form-label">Mô tả</label>
-          <input type="text" id="" class="form-control" placeholder="" name="title" value="<%= finance.title %>" />
-        </div>
+    </form>
+    <script>
+        let groupCounter = 1;  // Start from 1 since we already have group 0
 
-        <div class="mb-3">
-          <label for="" class="form-label">Thời gian</label>
-          <input type="date" id="" class="form-control" placeholder="" name="date" value="<%= date %>" />
-        </div>
+        document.getElementById('addGroup').addEventListener('click', function () {
+            const template = `
+                <div class="file-group mb-3">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <input type="text" name="onlinefiles[${groupCounter}][name]" class="form-control" placeholder="File name" required>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="url" name="onlinefiles[${groupCounter}][url]" class="form-control" placeholder="File URL" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger remove-group">x</button>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-        <div class="mb-3">
-          <label for="project-overview" class="form-label">Ghi chú</label>
-          <textarea class="form-control" id="" rows="5" placeholder="" name="note"><%= finance.note %></textarea>
-        </div>
+            document.getElementById('fileGroups').insertAdjacentHTML('beforeend', template);
+            groupCounter++;
+        });
 
-        <div class="mb-3">
-          <label for="project-overview" class="form-label">Loại</label>
-          <select name="isExpense" id="" class="form-select">
-            <option value="false" <%=finance.isExpense&&!finance.isAdvanced? '' :'selected'%>>Doanh thu</option>
-            <option value="true" <%=!finance.isExpense&&!finance.isAdvanced? '' :'selected'%>>Chi phí</option>
-            <option value="advanced" <%=!finance.isExpense&&finance.isAdvanced? '' :'selected'%>>Chi phí ứng</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="" class="form-label">Số tiền(VND)</label>
-          <input type="text" id="" class="form-control" placeholder="" name="amount" value="<%= finance.amount %>" />
-        </div>
-        <div class="mb-3">
-          <label for="" class="form-label">Thêm file đính kèm</label>
-          <input type="file" name="files" class="form-control" multiple>
-        </div>
-        <!-- Date View -->
-      </div>
-    </div>
-    <div class="col-lg-6">
-      <div class="mb-3 ">
-        <% if(finance.Files.length) {%>
-        <label for="" class="form-label">Tệp đính kèm</label>
+        document.getElementById('fileGroups').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-group')) {
+                e.target.closest('.file-group').remove();
+            }
+        });
 
+        document.getElementById('fileForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {};
 
-        <div id="files">
-          <% finance.Files.forEach(el=> { %>
-            <div class="alert alert-light border alert-dismissible fade show mb-0">
-              <a class="avt-link" href="/uploads/finance/<%= el.fileName  %>" target="_blank">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                  class="bi bi-file-earmark-text" viewBox="0 0 16 16">
-                  <path
-                    d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" />
-                  <path
-                    d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
-                </svg>
-                <%= el.fileDisplay %>
-              </a>
-              <button type="button" class="btn-close btn-danger btn-file-delete" id="file-<%= el.id %>" data-bs-toggle="modal"
-                data-bs-target="#fileModal"></button>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" id="close-<%= el.id %>" aria-label="Close"
-                hidden></button>
-            </div>
-            <% }) %>
-        </div>
-        <% } %>
-        
-       
-      </div>
-    </div>
+            for (let [key, value] of formData.entries()) {
+                // Convert array-like names to nested object structure
+                let parts = key.match(/\w+/g);  // splits "files[0][name]" into ["files", "0", "name"]
+                let current = data;
+
+                for (let i = 0; i < parts.length - 1; i++) {
+                    let part = parts[i];
+                    current[part] = current[part] || (isNaN(parts[i + 1]) ? {} : []);
+                    current = current[part];
+                }
+
+                current[parts[parts.length - 1]] = value;
+            }
+
+            console.log('Form Data:', data);
+        });
+    </script>
+    <script>
 
 
-    <div class="d-flex ">
-      <div>
-        <button class="btn btn-primary">Lưu thay đổi</button>
-      </div>
-      <div class="mx-1">
-        <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Xóa</a>
-      </div>
-    </div>
-  </form>
+        $('.btn-file-delete').on('click', function () {
+            const modal = document.querySelector(this.dataset.bsTarget);
+            const [bob, id] = this.id.split('-');
+            modal.querySelector('.modal-body').innerText = 'file ' + this.previousElementSibling.innerText + ' sẽ bị xóa, tiếp tục?';
+            const input = document.createElement('input');
+            input.value = id;
+            input.hidden = true;
+            modal.querySelector('.modal-body').appendChild(input);
+        })
+        $('#file-confirm').on('click', function (e) {
+            const modal = document.querySelector('#fileModal');
+            const id = modal.querySelector('input').value;
+            const response = fetch(`filedelete/${id}`, {
+                method: 'delete'
+            })
+            document.getElementById(`close-${id}`).click();
+            modal.querySelector('.btn-close').click();
+        })
 
-  <script>
-
-
-    $('.btn-file-delete').on('click', function () {
-      const modal = document.querySelector(this.dataset.bsTarget);
-      const [bob, id] = this.id.split('-');
-      modal.querySelector('.modal-body').innerText = 'file ' + this.previousElementSibling.innerText + ' sẽ bị xóa, tiếp tục?';
-      const input = document.createElement('input');
-      input.value = id;
-      input.hidden = true;
-      modal.querySelector('.modal-body').appendChild(input);
-    })
-    $('#file-confirm').on('click',  function (e) {
-      const modal = document.querySelector('#fileModal');
-      const id = modal.querySelector('input').value;
-      const response =  fetch(`filedelete/${id}`, {
-        method: 'delete'
-      })
-      document.getElementById(`close-${id}`).click();
-      modal.querySelector('.btn-close').click();
-    })
-
-  </script>
+    </script>

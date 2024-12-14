@@ -26,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
+      identification: {
+        type: DataTypes.STRING,
+      },
+      gender: {
+        type: DataTypes.STRING,
+      },
       phone: {
         type: DataTypes.STRING,
       },

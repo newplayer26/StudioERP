@@ -22,7 +22,7 @@ const hrRoutes = require("./routes/hrRoutes");
 const projectRoutes = require("./routes/projects");
 const taskRoutes = require("./routes/tasks");
 const apiRoutes = require("./routes/api");
-const homeRoutes = require("./routes/home");
+const manageRoutes = require("./routes/manage");
 const initAPIRoutes = require("./routes/API/index");
 const SSE = require("express-sse");
 const sse = new SSE();
@@ -135,13 +135,16 @@ initAPIRoutes(app);
 app.use(isLoggedIn);
 
 app.get("/", (req, res) => {
-  res.redirect("/home");
+  res.redirect("/projects");
+});
+app.get("/home", (req, res) => {
+  res.redirect("/projects");
 });
 app.use("/", authRoute);
 
 app.use("/search", apiRoutes);
 
-app.use("/home", homeRoutes);
+app.use("/manage", manageRoutes);
 app.use("/users", hrRoutes);
 app.use("/projects", projectRoutes);
 app.use("/tasks", taskRoutes);

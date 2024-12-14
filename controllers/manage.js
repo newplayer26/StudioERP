@@ -3,10 +3,9 @@ const {
   User,
   Task,
   Project,
-  Daily,
   File,
-  Salary,
-  Finance,
+  Avatar,
+  FinancialReports,
   sequelize,
   Timekeep,
   Asset,
@@ -87,14 +86,9 @@ module.exports.fetchUsers = async (req, res) => {
       where: {
         isActive: true,
       },
-      order: [["accessLevel", "ASC"]],
       include: [
         {
-          model: File,
-          as: "avatar",
-        },
-        {
-          model: Salary,
+          model: Avatar,
         },
       ],
     },
@@ -112,14 +106,7 @@ module.exports.fetchUsers = async (req, res) => {
     </span>
     ${user.name}</a>`;
 
-        let one = [
-          users.indexOf(user) + 1,
-          userStr,
-          user.phone,
-          user.email,
-          user.title,
-          user.isFulltime ? "Full time" : "Part time",
-        ];
+        let one = [users.indexOf(user) + 1, userStr, user.phone, user.email];
         all.push(one);
       });
       res.json(all);

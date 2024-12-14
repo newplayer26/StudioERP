@@ -1,187 +1,177 @@
 <% layout('layouts/boilerplate') %>
-  <div class="modal fade" id="avtModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ảnh đại diện</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="imgPreview" class="text-center"></div>
-          <form action="/users/<%= user.id %>/avatar" class="mt-5 row" method="post" id="avtUpload"
-            enctype="multipart/form-data" novalidate>
-            <div class="mb-3">
-              <input class="form-control" type="file" id="avtFile" name="avatar" required>
-              <script>
-                $("#avtFile").on('change', function (e) {
-                  let src = URL.createObjectURL(e.target.files[0]);
+    <div class="modal fade" id="avtModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ảnh đại diện</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="imgPreview" class="text-center"></div>
+                    <form action="/users/<%= user.id %>/avatar" class="mt-5 row" method="post" id="avtUpload"
+                        enctype="multipart/form-data" novalidate>
+                        <div class="mb-3">
+                            <input class="form-control" type="file" id="avtFile" name="avatar" required>
+                            <script>
+                                $("#avtFile").on('change', function (e) {
+                                    let src = URL.createObjectURL(e.target.files[0]);
 
-                  const preview = document.getElementById('imgPreview');
-                  const embed = document.createElement('img');
-                  embed.src = src;
-                  embed.classList.add('rounded-circle');
-                  embed.classList.add('img-fluid')
-                  embed.style.width = "250px";
-                  embed.style.height = "250px";
-                  preview.appendChild(embed);
-                })
-              </script>
+                                    const preview = document.getElementById('imgPreview');
+                                    const embed = document.createElement('img');
+                                    embed.src = src;
+                                    embed.classList.add('rounded-circle');
+                                    embed.classList.add('img-fluid')
+                                    embed.style.width = "250px";
+                                    embed.style.height = "250px";
+                                    preview.appendChild(embed);
+                                })
+                            </script>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"
+                        onclick="document.getElementById('avtUpload').submit()">Save
+                        changes</button>
+                </div>
             </div>
-          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="document.getElementById('avtUpload').submit()">Save
-            changes</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="container mt-5 bg-light border py-5" style="height: 600px">
-    <nav>
-      <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <button class="nav-link active" id="nav-pi-tab" data-bs-toggle="tab" data-bs-target="#nav-pi" type="button"
-          role="tab" aria-controls="nav-pi" aria-selected="true">
-          Thông tin cá nhân
-        </button>
-        <button class="nav-link" id="nav-transaction-tab" data-bs-toggle="tab" data-bs-target="#nav-transaction"
-          type="button" role="tab" aria-controls="nav-transaction" aria-selected="false">
-          Thông tin thanh toán
-        </button>
-        <button class="nav-link" id="nav-avt-tab" data-bs-toggle="tab" data-bs-target="#nav-avatar" type="button"
-          role="tab" aria-controls="nav-avatar" aria-selected="false">
-          Ảnh đại diện
-        </button>
-        <button class="nav-link " id="nav-password-tab" data-bs-toggle="tab" data-bs-target="#nav-password"
-          type="button" role="tab" aria-controls="nav-password" aria-selected="false">
-          Mật khẩu
-        </button>
-      </div>
-    </nav>
-
-    <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="nav-pi" role="tabpanel" aria-labelledby="nav-pi-tab">
-        <form action="/users/<%= user.id %>?_method=PUT" id="edit-pi" class="mt-3 needs-validation" method="POST"
-          novalidate>
-          <div class="row">
-            <div class="col">
-              <label for="" class="form-label">Họ và tên</label>
-              <input type="text" name="name" class="form-control" value="<%= user.name %>" required>
-            </div>
-            <div class="col">
-              <label for="" class="form-label">Số điện thoại</label>
-              <input type="text" name="phone" class="form-control" value="<%= user.phone %>" required>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="dob" class="form-label">Ngày sinh</label>
-              <input type="date" class="form-control" id="dob" name="dob" value="<%= pi&&pi.dob? pi.dob:'' %>"
-                required />
-            </div>
-            <div class="col-md-6">
-              <label for="gender" class="form-label">Giới tính</label>
-              <select class="form-select" id="gender" name="gender" value="<%= pi&&pi.gender? pi.gender:'' %>" required>
-                <option selected disabled value="">-</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-                <option value="Khác">Khác</option>
-              </select>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-5 ">
-              <label for="city" class="form-label">Tỉnh/Thành phố</label>
-              <input type="text" class="form-control" id="city" name="location[city]"
-                value="<%= location&&location.city? location.city:'' %>" required />
-            </div>
-            <div class="col-md-7">
-              <label for="district" class="form-label">Quận/Huyện</label>
-              <input type="text" class="form-control" id="district" name="location[district]"
-                value="<%= location&&location.district? location.district:'' %>" required />
-            </div>
-          </div>
-          <div>
-            <label for="address" class="form-label">Địa chỉ</label>
-            <input type="text" class="form-control" name="location[address]"
-              value="<%= location&&location.address? location.address:'' %>" required />
-          </div>
-
-
-
-
-          <div class="mt-3">
-            <button class="btn btn-primary" id="submit-btn">
-              Cập nhật thông tin
-            </button>
-          </div>
-          
-        </form>
-      </div>
-
-      <div class="tab-pane fade" id="nav-transaction" role="tabpanel" aria-labelledby="nav-avt-tab" >
-        <form action="/users/<%= user.id %>/transaction" method="POST" class="mt-3 needs-validation" novalidate>
-          <div class="row">
-            <div class="form-row mb-3">
-              <label for="" class="form-label">Ngân hàng</label>
-              <input type="text" class="form-control" name="bankName" required value="<%= user.Salary? user.Salary.bankName: '' %>">
-            </div>
-            <div class="form-row mb-3">
-              <label for="" class="form-label">Số tài khoản</label>
-              <input type="text" class="form-control" name="bankNumber" required value="<%= user.Salary? user.Salary.bankNumber: '' %>">
-            </div>
-            <div>
-              <button class="btn btn-primary">
-                Cập nhật
-              </button>
-            </div>
-          </div>
-
-        </form>
-      </div>
-      <div class="tab-pane fade" id="nav-avatar" role="tabpanel" aria-labelledby="nav-avt-tab">
-        <div class="col-6 offset-3 text-center ">
-          <div>
-            <img src="/uploads/avatars/<%= user.getavatar().fileName %>" alt="avatar" class="rounded-circle img-fluid"
-              style="width: 200px; height: 200px" />
-          </div>
-          <button class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#avtModal">Cập nhật ảnh đại
-            diện</button>
-
-        </div>
-      </div>
-      <div class="tab-pane fade" id="nav-password" role="tabpanel" aria-labelledby="nav-password-tab">
-
-        <div class="row">
-          <div class="col-6 offset-3">
-            <form action="/users/<%= user.id %>/pw" class="mt-3 needs-validation" method="POST" id="pw-form" novalidate>
-              <div class="row mb-3">
-                <label for="current-pw" class="form-label">Mật khẩu hiện
-                  tại</label>
-                <input type="password" class="form-control" id="current-pw" name="current_pw" value="" required />
-              </div>
-              <div class="row mb-3">
-                <label for="new-pw" class="form-label">Mật khẩu mới</label>
-                <input type="password" class="form-control" id="new-pw" name="new_pw" value="" required />
-                <div class="invalid-feedback"></div>
-              </div>
-              <div class="row mb-3">
-                <label for="new-pw-confirm" class="form-label">Nhập lại
-                  mật khẩu</label>
-                <input type="password" class="form-control" id="new-pw-confirm" name="new_pw_confirm" value=""
-                  required />
-                <div class="invalid-feedback"></div>
-              </div>
-              <div class="row">
-                <button class="btn btn-primary col-4">
-                  Đổi mật khẩu
+    <div class="container mt-5 bg-light border py-5" style="height: 600px">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-pi-tab" data-bs-toggle="tab" data-bs-target="#nav-pi"
+                    type="button" role="tab" aria-controls="nav-pi" aria-selected="true">
+                    Thông tin cá nhân
                 </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+                <button class="nav-link" id="nav-avt-tab" data-bs-toggle="tab" data-bs-target="#nav-avatar"
+                    type="button" role="tab" aria-controls="nav-avatar" aria-selected="false">
+                    Ảnh đại diện
+                </button>
+                <button class="nav-link " id="nav-password-tab" data-bs-toggle="tab" data-bs-target="#nav-password"
+                    type="button" role="tab" aria-controls="nav-password" aria-selected="false">
+                    Mật khẩu
+                </button>
+            </div>
+        </nav>
 
-    <script src="/custom/javascripts/formvalidation.js">
-    </script>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-pi" role="tabpanel" aria-labelledby="nav-pi-tab">
+                <form action="/users/<%= user.id %>?_method=PUT" id="edit-pi" class="mt-3 needs-validation"
+                    method="POST" novalidate>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="" class="form-label">Họ và tên</label>
+                            <input type="text" name="name" class="form-control" value="<%= user.name %>" required>
+                        </div>
+                        <div class="col">
+
+                            <label for="dob" class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" id="dob" name="dob" value="<%= user.dob%>"
+                                required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="" class="form-label">Số điện thoại</label>
+                            <input type="text" name="phone" class="form-control" value="<%= user.phone %>" required>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" class="form-label">CCCD/CMND</label>
+                            <input type="text" name="identification" class="form-control"
+                                value="<%= user.identification %>" required>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="gender" class="form-label">Giới tính</label>
+                            <select class="form-select" id="gender" name="gender" value="<%= user.gender %>" required>
+                                <option selected disabled value="">-</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-5 ">
+                            <label for="city" class="form-label">Tỉnh/Thành phố</label>
+                            <input type="text" class="form-control" id="city" name="location[city]"
+                                value="<%= location[0] %>" required />
+                        </div>
+                        <div class="col-md-7">
+                            <label for="district" class="form-label">Quận/Huyện</label>
+                            <input type="text" class="form-control" id="district" name="location[district]"
+                                value="<%= location[1] %>" required />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="address" class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" name="location[address]" value="<%= location[2] %>"
+                            required />
+                    </div>
+
+
+
+
+                    <div class="mt-3">
+                        <button class="btn btn-primary" id="submit-btn">
+                            Cập nhật thông tin
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+
+            <div class="tab-pane fade" id="nav-avatar" role="tabpanel" aria-labelledby="nav-avt-tab">
+                <div class="col-6 offset-3 text-center ">
+                    <div>
+                        <img src="/uploads/avatars/<%= user.getavatar().fileName %>" alt="avatar"
+                            class="rounded-circle img-fluid" style="width: 200px; height: 200px" />
+                    </div>
+                    <button class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#avtModal">Cập nhật ảnh
+                        đại
+                        diện</button>
+
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-password" role="tabpanel" aria-labelledby="nav-password-tab">
+
+                <div class="row">
+                    <div class="col-6 offset-3">
+                        <form action="/users/<%= user.id %>/pw" class="mt-3 needs-validation" method="POST" id="pw-form"
+                            novalidate>
+                            <div class="row mb-3">
+                                <label for="current-pw" class="form-label">Mật khẩu hiện
+                                    tại</label>
+                                <input type="password" class="form-control" id="current-pw" name="current_pw" value=""
+                                    required />
+                            </div>
+                            <div class="row mb-3">
+                                <label for="new-pw" class="form-label">Mật khẩu mới</label>
+                                <input type="password" class="form-control" id="new-pw" name="new_pw" value=""
+                                    required />
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="new-pw-confirm" class="form-label">Nhập lại
+                                    mật khẩu</label>
+                                <input type="password" class="form-control" id="new-pw-confirm" name="new_pw_confirm"
+                                    value="" required />
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="row">
+                                <button class="btn btn-primary col-4">
+                                    Đổi mật khẩu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/custom/javascripts/formvalidation.js">
+        </script>
